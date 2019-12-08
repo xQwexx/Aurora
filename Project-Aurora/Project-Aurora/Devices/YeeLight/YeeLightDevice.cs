@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Aurora.Devices.YeeLight
 {
-    public class YeeLightDevice : Device
+    public class YeeLightDevice : IDevice
     {
         private string devicename = "YeeLight";
 

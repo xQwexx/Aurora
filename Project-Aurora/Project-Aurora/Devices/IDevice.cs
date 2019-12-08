@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
+using Aurora.Settings;
 
 namespace Aurora.Devices
 {
@@ -1316,13 +1318,13 @@ namespace Aurora.Devices
     /// <summary>
     /// An interface for a device class.
     /// </summary>
-    public interface Device
+    public interface IDevice
     {
         /// <summary>
         /// Gets registered variables by this device.
         /// </summary>
         /// <returns>Registered Variables</returns>
-        Settings.VariableRegistry GetRegisteredVariables();
+        VariableRegistry GetRegisteredVariables();
 
         /// <summary>
         /// Gets the device name.
@@ -1403,5 +1405,87 @@ namespace Aurora.Devices
         /// <param name="forced">A boolean value indicating whether or not to forcefully update this device</param>
         /// <returns></returns>
         bool UpdateDevice(DeviceColorComposition colorComposition, DoWorkEventArgs e, bool forced = false);
+    }
+
+    /// <summary>
+    /// Default Device implementation
+    /// </summary>
+    public abstract class Device : IDevice
+    {
+        protected abstract string DeviceName { get; }
+
+        protected bool isInitialized;
+
+        private readonly Stopwatch watch = new Stopwatch();
+        private long lastUpdateTime = 0;
+
+        public string GetDeviceDetails()
+        {
+            return DeviceName + ": " + (isInitialized ? "Initialized" : "Not initialized");
+        }
+
+        public string GetDeviceName()
+        {
+            return DeviceName;
+        }
+
+        public string GetDeviceUpdatePerformance()
+        {
+            return (isInitialized ? lastUpdateTime + " ms" : "");
+        }
+
+        public VariableRegistry GetRegisteredVariables()
+        {
+            return new VariableRegistry();
+        }
+
+        public bool IsInitialized()
+        {
+            return isInitialized;
+        }
+
+        public bool UpdateDevice(DeviceColorComposition colorComposition, DoWorkEventArgs e, bool forced = false)
+        {
+            watch.Restart();
+
+            bool update_result = UpdateDevice(colorComposition.keyColors, e, forced);
+
+            watch.Stop();
+            lastUpdateTime = watch.ElapsedMilliseconds;
+
+            return update_result;
+        }
+
+        public bool IsConnected()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool IsKeyboardConnected()
+        {
+            return isInitialized;
+        }
+
+        public bool IsPeripheralConnected()
+        {
+            return isInitialized;
+        }
+
+        public bool Reconnect()
+        {
+            return isInitialized;
+        }
+
+        public void Reset()
+        {
+            Shutdown();
+            Initialize();
+        }
+
+        public abstract bool Initialize();
+
+        public abstract void Shutdown();
+
+        public abstract bool UpdateDevice(Dictionary<DeviceKeys, Color> keyColors, DoWorkEventArgs e, bool forced = false);
     }
 }

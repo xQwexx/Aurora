@@ -1,4 +1,4 @@
-﻿using Aurora.Profiles;
+using Aurora.Profiles;
 using CSScriptLibrary;
 using System;
 using System.Collections.Generic;
@@ -8,12 +8,13 @@ using System.Drawing;
 using System.IO;
 using System.Threading;
 using Microsoft.Win32;
+using System.Reflection;
 
 namespace Aurora.Devices
 {
     public class DeviceContainer
     {
-        public Device Device { get; set; }
+        public IDevice Device { get; set; }
 
         public BackgroundWorker Worker = new BackgroundWorker();
         public Thread UpdateThread { get; set; } = null;
@@ -21,7 +22,7 @@ namespace Aurora.Devices
         private Tuple<DeviceColorComposition, bool> currentComp = null;
         private bool newFrame = false;
 
-        public DeviceContainer(Device device)
+        public DeviceContainer(IDevice device)
         {
             this.Device = device;
             Worker.DoWork += WorkerOnDoWork;
@@ -96,25 +97,25 @@ namespace Aurora.Devices
 
         public DeviceManager()
         {
-            devices.Add(new DeviceContainer(new Devices.Logitech.LogitechDevice()));         // Logitech Device
-            devices.Add(new DeviceContainer(new Devices.Corsair.CorsairDevice()));           // Corsair Device
-            devices.Add(new DeviceContainer(new Devices.Razer.RazerDevice()));               // Razer Device
-            devices.Add(new DeviceContainer(new Devices.Roccat.RoccatDevice()));             // Roccat Device
-            devices.Add(new DeviceContainer(new Devices.Clevo.ClevoDevice()));               // Clevo Device
-            devices.Add(new DeviceContainer(new Devices.CoolerMaster.CoolerMasterDevice())); // CoolerMaster Device
-            devices.Add(new DeviceContainer(new Devices.AtmoOrbDevice.AtmoOrbDevice()));     // AtmoOrb Ambilight Device
-            devices.Add(new DeviceContainer(new Devices.SteelSeries.SteelSeriesDevice()));   // SteelSeries Device
-            devices.Add(new DeviceContainer(new Devices.UnifiedHID.UnifiedHIDDevice()));     // UnifiedHID Device
-            devices.Add(new DeviceContainer(new Devices.Wooting.WootingDevice()));           // Wooting Device
-            devices.Add(new DeviceContainer(new Devices.Creative.SoundBlasterXDevice()));    // SoundBlasterX Device
-            devices.Add(new DeviceContainer(new Devices.LightFX.LightFxDevice()));           //Alienware
-            devices.Add(new DeviceContainer(new Devices.Dualshock.DualshockDevice()));       //DualShock 4 Device
-            devices.Add(new DeviceContainer(new Devices.Drevo.DrevoDevice()));               // Drevo Device
-            devices.Add(new DeviceContainer(new Devices.YeeLight.YeeLightDevice()));         // YeeLight Device
-            devices.Add(new DeviceContainer(new Devices.Asus.AsusDevice()));               // Asus Device
-            devices.Add(new DeviceContainer(new Devices.NZXT.NZXTDevice()));                 //NZXT Device
-            devices.Add(new DeviceContainer(new Devices.Vulcan.VulcanDevice()));
-            
+            devices.Add(new DeviceContainer(new Logitech.LogitechDevice()));
+            devices.Add(new DeviceContainer(new Corsair.CorsairDevice()));
+            devices.Add(new DeviceContainer(new Razer.RazerDevice()));
+            devices.Add(new DeviceContainer(new Roccat.RoccatDevice()));
+            devices.Add(new DeviceContainer(new Clevo.ClevoDevice()));
+            devices.Add(new DeviceContainer(new CoolerMaster.CoolerMasterDevice()));
+            devices.Add(new DeviceContainer(new AtmoOrbDevice.AtmoOrbDevice()));
+            devices.Add(new DeviceContainer(new SteelSeries.SteelSeriesDevice()));
+            devices.Add(new DeviceContainer(new UnifiedHID.UnifiedHIDDevice()));
+            devices.Add(new DeviceContainer(new Wooting.WootingDevice()));
+            devices.Add(new DeviceContainer(new Creative.SoundBlasterXDevice()));
+            devices.Add(new DeviceContainer(new LightFX.LightFxDevice()));
+            devices.Add(new DeviceContainer(new Dualshock.DualshockDevice()));
+            devices.Add(new DeviceContainer(new Drevo.DrevoDevice()));
+            devices.Add(new DeviceContainer(new YeeLight.YeeLightDevice()));
+            devices.Add(new DeviceContainer(new Asus.AsusDevice()));
+            devices.Add(new DeviceContainer(new NZXT.NZXTDevice()));
+            devices.Add(new DeviceContainer(new Vulcan.VulcanDevice()));
+
             string devices_scripts_path = System.IO.Path.Combine(Global.ExecutingDirectory, "Scripts", "Devices");
 
             if (Directory.Exists(devices_scripts_path))
@@ -133,7 +134,7 @@ namespace Aurora.Devices
                                 {
                                     dynamic script = Global.PythonEngine.Operations.CreateInstance(main_type);
 
-                                    Device scripted_device = new Devices.ScriptedDevice.ScriptedDevice(script);
+                                    IDevice scripted_device = new Devices.ScriptedDevice.ScriptedDevice(script);
 
                                     devices.Add(new DeviceContainer(scripted_device));
                                 }
@@ -147,7 +148,7 @@ namespace Aurora.Devices
                                 {
                                     dynamic script = Activator.CreateInstance(typ);
 
-                                    Device scripted_device = new Devices.ScriptedDevice.ScriptedDevice(script);
+                                    IDevice scripted_device = new Devices.ScriptedDevice.ScriptedDevice(script);
 
                                     devices.Add(new DeviceContainer(scripted_device));
                                 }
@@ -161,6 +162,31 @@ namespace Aurora.Devices
                     catch (Exception exc)
                     {
                         Global.logger.Error("An error occured while trying to load script {0}. Exception: {1}", device_script, exc);
+                    }
+                }
+            }
+
+            string deviceDllFolder = Path.Combine(Global.ExecutingDirectory, "Plugins", "Devices");
+
+            Global.logger.Info("Loading Device Plugins");
+            if (Directory.Exists(deviceDllFolder))
+            {
+                foreach(var deviceDll in Directory.EnumerateFiles(deviceDllFolder))
+                {
+                    var deviceAssembly = Assembly.LoadFrom(deviceDll);
+
+                    foreach (var type in deviceAssembly.GetExportedTypes())
+                    {
+                        if (typeof(IDevice).IsAssignableFrom(type))
+                        {
+                            IDevice devDll = (IDevice)Activator.CreateInstance(type);
+
+                            devices.Add(new DeviceContainer(devDll));
+                        }
+                        else
+                        {
+                            Global.logger.Error("Error loading device dll: " + deviceDll);
+                        }
                     }
                 }
             }
@@ -295,9 +321,9 @@ namespace Aurora.Devices
             return anyInitialized;
         }
 
-        public Device[] GetInitializedDevices()
+        public IDevice[] GetInitializedDevices()
         {
-            List<Device> ret = new List<Device>();
+            List<IDevice> ret = new List<IDevice>();
 
             foreach (DeviceContainer device in devices)
             {
