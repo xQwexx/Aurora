@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Aurora.Devices;
 using DS4Windows;
 
-namespace Dualshock4_Device
+namespace Device_Dualshock4
 {
     public class Dualshock4Device : Device
     {
