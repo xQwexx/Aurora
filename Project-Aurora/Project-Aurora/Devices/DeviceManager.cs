@@ -9,6 +9,7 @@ using System.IO;
 using System.Threading;
 using Microsoft.Win32;
 using System.Reflection;
+using System.Linq;
 
 namespace Aurora.Devices
 {
@@ -72,9 +73,11 @@ namespace Aurora.Devices
 
     public class DeviceManager : IDisposable
     {
-        private List<DeviceContainer> devices = new List<DeviceContainer>();
+        public List<DeviceContainer> DeviceContainers { get; } = new List<DeviceContainer>();
+        public IEnumerable<IDevice> Devices => DeviceContainers.Select(d => d.Device);
+        public IEnumerable<DeviceContainer> InitializedDeviceContainers => DeviceContainers.Where(dc => dc.Device.IsInitialized());
+        public IEnumerable<IDevice> InitializedDevices => Devices.Where(d => d.IsInitialized());
 
-        public DeviceContainer[] Devices { get { return devices.ToArray(); } }
 
         private bool anyInitialized = false;
         private bool retryActivated = false;
@@ -97,24 +100,24 @@ namespace Aurora.Devices
 
         public DeviceManager()
         {
-            devices.Add(new DeviceContainer(new Logitech.LogitechDevice()));
-            devices.Add(new DeviceContainer(new Corsair.CorsairDevice()));
-            devices.Add(new DeviceContainer(new Razer.RazerDevice()));
-            devices.Add(new DeviceContainer(new Roccat.RoccatDevice()));
-            devices.Add(new DeviceContainer(new Clevo.ClevoDevice()));
-            devices.Add(new DeviceContainer(new CoolerMaster.CoolerMasterDevice()));
-            devices.Add(new DeviceContainer(new AtmoOrbDevice.AtmoOrbDevice()));
-            devices.Add(new DeviceContainer(new SteelSeries.SteelSeriesDevice()));
-            devices.Add(new DeviceContainer(new UnifiedHID.UnifiedHIDDevice()));
-            devices.Add(new DeviceContainer(new Wooting.WootingDevice()));
-            devices.Add(new DeviceContainer(new Creative.SoundBlasterXDevice()));
-            devices.Add(new DeviceContainer(new LightFX.LightFxDevice()));
-            devices.Add(new DeviceContainer(new Dualshock.DualshockDevice()));
-            devices.Add(new DeviceContainer(new Drevo.DrevoDevice()));
-            devices.Add(new DeviceContainer(new YeeLight.YeeLightDevice()));
-            devices.Add(new DeviceContainer(new Asus.AsusDevice()));
-            devices.Add(new DeviceContainer(new NZXT.NZXTDevice()));
-            devices.Add(new DeviceContainer(new Vulcan.VulcanDevice()));
+            DeviceContainers.Add(new DeviceContainer(new Logitech.LogitechDevice()));
+            DeviceContainers.Add(new DeviceContainer(new Corsair.CorsairDevice()));
+            DeviceContainers.Add(new DeviceContainer(new Razer.RazerDevice()));
+            DeviceContainers.Add(new DeviceContainer(new Roccat.RoccatDevice()));
+            DeviceContainers.Add(new DeviceContainer(new Clevo.ClevoDevice()));
+            DeviceContainers.Add(new DeviceContainer(new CoolerMaster.CoolerMasterDevice()));
+            DeviceContainers.Add(new DeviceContainer(new AtmoOrbDevice.AtmoOrbDevice()));
+            DeviceContainers.Add(new DeviceContainer(new SteelSeries.SteelSeriesDevice()));
+            DeviceContainers.Add(new DeviceContainer(new UnifiedHID.UnifiedHIDDevice()));
+            DeviceContainers.Add(new DeviceContainer(new Wooting.WootingDevice()));
+            DeviceContainers.Add(new DeviceContainer(new Creative.SoundBlasterXDevice()));
+            DeviceContainers.Add(new DeviceContainer(new LightFX.LightFxDevice()));
+            DeviceContainers.Add(new DeviceContainer(new Dualshock.DualshockDevice()));
+            DeviceContainers.Add(new DeviceContainer(new Drevo.DrevoDevice()));
+            DeviceContainers.Add(new DeviceContainer(new YeeLight.YeeLightDevice()));
+            DeviceContainers.Add(new DeviceContainer(new Asus.AsusDevice()));
+            DeviceContainers.Add(new DeviceContainer(new NZXT.NZXTDevice()));
+            DeviceContainers.Add(new DeviceContainer(new Vulcan.VulcanDevice()));
 
             string devices_scripts_path = System.IO.Path.Combine(Global.ExecutingDirectory, "Scripts", "Devices");
 
@@ -136,7 +139,7 @@ namespace Aurora.Devices
 
                                     IDevice scripted_device = new Devices.ScriptedDevice.ScriptedDevice(script);
 
-                                    devices.Add(new DeviceContainer(scripted_device));
+                                    DeviceContainers.Add(new DeviceContainer(scripted_device));
                                 }
                                 else
                                     Global.logger.Error("Script \"{0}\" does not contain a public 'main' class", device_script);
@@ -150,7 +153,7 @@ namespace Aurora.Devices
 
                                     IDevice scripted_device = new Devices.ScriptedDevice.ScriptedDevice(script);
 
-                                    devices.Add(new DeviceContainer(scripted_device));
+                                    DeviceContainers.Add(new DeviceContainer(scripted_device));
                                 }
 
                                 break;
@@ -171,7 +174,7 @@ namespace Aurora.Devices
             Global.logger.Info("Loading Device Plugins");
             if (Directory.Exists(deviceDllFolder))
             {
-                foreach(var deviceDll in Directory.EnumerateFiles(deviceDllFolder))
+                foreach(var deviceDll in Directory.EnumerateFiles(deviceDllFolder, "*.dll"))
                 {
                     var deviceAssembly = Assembly.LoadFrom(deviceDll);
 
@@ -181,7 +184,7 @@ namespace Aurora.Devices
                         {
                             IDevice devDll = (IDevice)Activator.CreateInstance(type);
 
-                            devices.Add(new DeviceContainer(devDll));
+                            DeviceContainers.Add(new DeviceContainer(devDll));
                         }
                         else
                         {
@@ -229,7 +232,7 @@ namespace Aurora.Devices
         public void RegisterVariables()
         {
             //Register any variables
-            foreach (var device in devices)
+            foreach (var device in DeviceContainers)
                 Global.Configuration.VarRegistry.Combine(device.Device.GetRegisteredVariables());
         }
 
@@ -239,7 +242,7 @@ namespace Aurora.Devices
                 return;
 
             int devicesToRetryNo = 0;
-            foreach (DeviceContainer device in devices)
+            foreach (DeviceContainer device in DeviceContainers)
             {
                 if (device.Device.IsInitialized() || Global.Configuration.devices_disabled.Contains(device.Device.GetType()))
                     continue;
@@ -281,7 +284,7 @@ namespace Aurora.Devices
                     continue;
                 int devicesAttempted = 0;
                 bool _anyInitialized = false;
-                foreach (DeviceContainer device in devices)
+                foreach (DeviceContainer device in DeviceContainers)
                 {
                     if (device.Device.IsInitialized() || Global.Configuration.devices_disabled.Contains(device.Device.GetType()))
                         continue;
@@ -321,24 +324,9 @@ namespace Aurora.Devices
             return anyInitialized;
         }
 
-        public IDevice[] GetInitializedDevices()
-        {
-            List<IDevice> ret = new List<IDevice>();
-
-            foreach (DeviceContainer device in devices)
-            {
-                if (device.Device.IsInitialized())
-                {
-                    ret.Add(device.Device);
-                }
-            }
-
-            return ret.ToArray();
-        }
-
         public void Shutdown()
         {
-            foreach (DeviceContainer device in devices)
+            foreach (DeviceContainer device in DeviceContainers)
             {
                 if (device.Device.IsInitialized())
                 {
@@ -352,7 +340,7 @@ namespace Aurora.Devices
 
         public void ResetDevices()
         {
-            foreach (DeviceContainer device in devices)
+            foreach (DeviceContainer device in DeviceContainers)
             {
                 if (device.Device.IsInitialized())
                 {
@@ -363,7 +351,7 @@ namespace Aurora.Devices
 
         public void UpdateDevices(DeviceColorComposition composition, bool forced = false)
         {
-            foreach (DeviceContainer device in devices)
+            foreach (DeviceContainer device in DeviceContainers)
             {
                 if (device.Device.IsInitialized())
                 {
@@ -383,7 +371,7 @@ namespace Aurora.Devices
         {
             string devices_info = "";
 
-            foreach (DeviceContainer device in devices)
+            foreach (DeviceContainer device in DeviceContainers)
                 devices_info += device.Device.GetDeviceDetails() + "\r\n";
 
             if (retryAttemptsLeft > 0)

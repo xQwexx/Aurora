@@ -61,7 +61,7 @@ namespace Aurora.Controls
 
         private void UpdateControls()
         {
-            this.lstDevices.ItemsSource = Global.dev_manager.Devices;
+            this.lstDevices.ItemsSource = Global.dev_manager.DeviceContainers;
             this.lstDevices.Items.Refresh();
         }
 

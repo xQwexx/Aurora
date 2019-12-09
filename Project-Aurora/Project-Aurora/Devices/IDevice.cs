@@ -1419,6 +1419,8 @@ namespace Aurora.Devices
         private readonly Stopwatch watch = new Stopwatch();
         private long lastUpdateTime = 0;
 
+        protected void Log(string s) => Global.logger.Info(s);
+
         public string GetDeviceDetails()
         {
             return DeviceName + ": " + (isInitialized ? "Initialized" : "Not initialized");
@@ -1431,7 +1433,7 @@ namespace Aurora.Devices
 
         public string GetDeviceUpdatePerformance()
         {
-            return (isInitialized ? lastUpdateTime + " ms" : "");
+            return isInitialized ? lastUpdateTime + " ms" : "";
         }
 
         public VariableRegistry GetRegisteredVariables()
@@ -1458,7 +1460,7 @@ namespace Aurora.Devices
 
         public bool IsConnected()
         {
-            throw new System.NotImplementedException();
+            return isInitialized;
         }
 
         public bool IsKeyboardConnected()
