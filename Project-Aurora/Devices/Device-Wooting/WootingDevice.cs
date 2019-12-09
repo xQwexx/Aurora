@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Aurora.Devices;
+using Aurora.Settings;
 using Wooting;
 
 namespace Device_Wooting
@@ -64,9 +65,9 @@ namespace Device_Wooting
                     if (devKey == WootingKey.Keys.None)
                         continue;
 
-                    RGBControl.SetKey(devKey, (byte)(clr.R * variableRegistry.GetVariable<int>($"{DeviceName}_scalar_r") / 100),
-                                              (byte)(clr.G * variableRegistry.GetVariable<int>($"{DeviceName}_scalar_g") / 100),
-                                              (byte)(clr.B * variableRegistry.GetVariable<int>($"{DeviceName}_scalar_b") / 100));
+                    RGBControl.SetKey(devKey, (byte)(clr.R * GlobalVarRegistry.GetVariable<int>($"{DeviceName}_scalar_r") / 100),
+                                              (byte)(clr.G * GlobalVarRegistry.GetVariable<int>($"{DeviceName}_scalar_g") / 100),
+                                              (byte)(clr.B * GlobalVarRegistry.GetVariable<int>($"{DeviceName}_scalar_b") / 100));
                 }
                 if (e.Cancel)
                     return false;
@@ -81,11 +82,11 @@ namespace Device_Wooting
             }
         }
 
-        protected override void RegisterVariables()
+        protected override void RegisterVariables(VariableRegistry local)
         {
-            variableRegistry.Register($"{DeviceName}_scalar_r", 100, "Red Scalar", 100, 0);
-            variableRegistry.Register($"{DeviceName}_scalar_g", 100, "Green Scalar", 100, 0);
-            variableRegistry.Register($"{DeviceName}_scalar_b", 100, "Blue Scalar", 100, 0, "In percent");
+            local.Register($"{DeviceName}_scalar_r", 100, "Red Scalar", 100, 0);
+            local.Register($"{DeviceName}_scalar_g", 100, "Green Scalar", 100, 0);
+            local.Register($"{DeviceName}_scalar_b", 100, "Blue Scalar", 100, 0, "In percent");
         }
 
         public static Dictionary<DeviceKeys, WootingKey.Keys> KeyMap = new Dictionary<DeviceKeys, WootingKey.Keys> {

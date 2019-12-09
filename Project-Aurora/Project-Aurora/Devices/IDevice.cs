@@ -1417,8 +1417,10 @@ namespace Aurora.Devices
         protected bool isInitialized;
 
         private readonly Stopwatch watch = new Stopwatch();
+
         private long lastUpdateTime = 0;
-        protected VariableRegistry variableRegistry;
+
+        private VariableRegistry variableRegistry;
 
         protected void LogInfo(string s) => Global.logger.Info(s);
 
@@ -1426,37 +1428,39 @@ namespace Aurora.Devices
 
         protected Color CorrectAlpha(Color clr) => Color.FromArgb(255, Utils.ColorUtils.MultiplyColorByScalar(clr, clr.A / 255.0D));
 
-        public string GetDeviceDetails()
+        protected VariableRegistry GlobalVarRegistry => Global.Configuration.VarRegistry;
+
+        public virtual string GetDeviceDetails()
         {
             return DeviceName + ": " + (isInitialized ? "Initialized" : "Not initialized");
         }
 
-        public string GetDeviceName()
+        public virtual string GetDeviceName()
         {
             return DeviceName;
         }
 
-        public string GetDeviceUpdatePerformance()
+        public virtual string GetDeviceUpdatePerformance()
         {
             return isInitialized ? lastUpdateTime + " ms" : "";
         }
 
-        public VariableRegistry GetRegisteredVariables()
+        public virtual VariableRegistry GetRegisteredVariables()
         {
             if(variableRegistry == null)
             {
                 variableRegistry = new VariableRegistry();
-                RegisterVariables();
+                RegisterVariables(variableRegistry);
             }
             return variableRegistry;
         }
 
-        public bool IsInitialized()
+        public virtual bool IsInitialized()
         {
             return isInitialized;
         }
 
-        public bool UpdateDevice(DeviceColorComposition colorComposition, DoWorkEventArgs e, bool forced = false)
+        public virtual bool UpdateDevice(DeviceColorComposition colorComposition, DoWorkEventArgs e, bool forced = false)
         {
             watch.Restart();
 
@@ -1468,27 +1472,27 @@ namespace Aurora.Devices
             return update_result;
         }
 
-        public bool IsConnected()
+        public virtual bool IsConnected()
         {
             return isInitialized;
         }
 
-        public bool IsKeyboardConnected()
+        public virtual bool IsKeyboardConnected()
         {
             return isInitialized;
         }
 
-        public bool IsPeripheralConnected()
+        public virtual bool IsPeripheralConnected()
         {
             return isInitialized;
         }
 
-        public bool Reconnect()
+        public virtual bool Reconnect()
         {
             return isInitialized;
         }
 
-        public void Reset()
+        public virtual void Reset()
         {
             Shutdown();
             Initialize();
@@ -1512,6 +1516,6 @@ namespace Aurora.Devices
         /// <summary>
         /// Only called once when registering variables. Can be empty if not needed
         /// </summary>
-        protected abstract void RegisterVariables();
+        protected abstract void RegisterVariables(VariableRegistry local);
     }
 }
