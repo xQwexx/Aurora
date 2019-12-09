@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Aurora.Devices;
+using Aurora.Settings;
 
 namespace Device_Example
 {
@@ -32,7 +33,9 @@ namespace Device_Example
             return true;
         }
 
-        protected override void RegisterVariables()
-        { }
+        protected override void RegisterVariables(VariableRegistry local)
+        {
+            local.Register("example variable", new VariableRegistryItem());
+        }
     }
 }
