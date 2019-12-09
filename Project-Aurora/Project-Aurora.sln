@@ -34,9 +34,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SBAuroraReactive", "..\SBAu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NZXTSharp", "..\NZXTSharp\NZXTSharp\NZXTSharp.csproj", "{62094023-0479-4DD4-8A74-4321CC0F08DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Device-Example", "Device-Example\Device-Example.csproj", "{9CE5BADA-C85A-4B79-BAFA-55A1C1633612}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Device-Example", "Devices\Device-Example\Device-Example.csproj", "{9CE5BADA-C85A-4B79-BAFA-55A1C1633612}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Device-Wooting", "Device-Wooting\Device-Wooting.csproj", "{D813363C-0569-4094-BA28-AE1603093C77}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Device-Wooting", "Devices\Device-Wooting\Device-Wooting.csproj", "{D813363C-0569-4094-BA28-AE1603093C77}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Devices", "Devices", "{7956DBBB-678F-4981-AFF5-013929FDB5B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -139,6 +141,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9CE5BADA-C85A-4B79-BAFA-55A1C1633612} = {7956DBBB-678F-4981-AFF5-013929FDB5B1}
+		{D813363C-0569-4094-BA28-AE1603093C77} = {7956DBBB-678F-4981-AFF5-013929FDB5B1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {490F6EB6-991A-412C-B8F2-336A989F162A}
