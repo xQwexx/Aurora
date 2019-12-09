@@ -111,7 +111,6 @@ namespace Aurora.Devices
             DeviceContainers.Add(new DeviceContainer(new UnifiedHID.UnifiedHIDDevice()));
             DeviceContainers.Add(new DeviceContainer(new Creative.SoundBlasterXDevice()));
             DeviceContainers.Add(new DeviceContainer(new LightFX.LightFxDevice()));
-            DeviceContainers.Add(new DeviceContainer(new Dualshock.DualshockDevice()));
             DeviceContainers.Add(new DeviceContainer(new Drevo.DrevoDevice()));
             DeviceContainers.Add(new DeviceContainer(new YeeLight.YeeLightDevice()));
             DeviceContainers.Add(new DeviceContainer(new Asus.AsusDevice()));
