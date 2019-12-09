@@ -1,194 +1,91 @@
-﻿using Aurora.Settings;
-using Aurora.Utils;
-using CoolerMaster;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Threading;
+using System.Text;
 using System.Threading.Tasks;
+using Aurora.Devices;
 using Wooting;
 
-namespace Aurora.Devices.Wooting
+namespace Device_Wooting
 {
-    class WootingDevice : IDevice
+    public class WootingDevice : Aurora.Devices.Device
     {
-        private String devicename = "Wooting";
-        private bool isInitialized = false;
+        protected override string DeviceName => "Wooting";
 
-        private bool keyboard_updated = false;
-        private VariableRegistry default_registry = null;
-
-        private readonly object action_lock = new object();
-
-        private System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
-        private long lastUpdateTime = 0;
-
-        public bool Initialize()
+        public override bool Initialize()
         {
-            lock (action_lock)
+            if (!isInitialized)
             {
-                if (!isInitialized)
+                try
                 {
-                    try
+                    if (RGBControl.IsConnected())
                     {
-                        if (RGBControl.IsConnected())
-                        {
-                            isInitialized = true;
-                        }
-                    }
-                    catch (Exception exc)
-                    {
-                        Global.logger.Error("There was an error initializing Wooting SDK.\r\n" + exc.Message);
-
-                        return false;
+                        isInitialized = true;
                     }
                 }
-
-                if (!isInitialized)
-                    Global.logger.Info("No Wooting devices successfully Initialized!");
-
-                return isInitialized;
-            }
-        }
-
-        ~WootingDevice()
-        {
-            this.Shutdown();
-        }
-
-        public void Shutdown()
-        {
-            lock (action_lock)
-            {
-                if (isInitialized)
+                catch (Exception exc)
                 {
-                    RGBControl.Reset();
-                    isInitialized = false;
+                    LogError("There was an error initializing Wooting SDK.\r\n" + exc.Message);
+
+                    return false;
                 }
             }
+
+            if (!isInitialized)
+                LogInfo("No Wooting devices successfully Initialized!");
+
+            return isInitialized;
         }
 
-        public string GetDeviceDetails()
+        public override void Shutdown()
         {
             if (isInitialized)
             {
-                string devString = devicename + ": ";
-                devString += "Connected";
-                return devString;
-            }
-            else
-            {
-                return devicename + ": Not initialized";
+                RGBControl.Reset();
+                isInitialized = false;
             }
         }
 
-        public string GetDeviceName()
-        {
-            return devicename;
-        }
-
-        public void Reset()
-        {
-            if (this.IsInitialized() && keyboard_updated)
-            {
-                keyboard_updated = false;
-            }
-        }
-
-        public bool Reconnect()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsConnected()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsInitialized()
-        {
-            return this.isInitialized;
-        }
-
-        public bool UpdateDevice(Dictionary<DeviceKeys, Color> keyColors, DoWorkEventArgs e, bool forced = false)
+        public override bool UpdateDevice(Dictionary<DeviceKeys, System.Drawing.Color> keyColors, DoWorkEventArgs e, bool forced = false)
         {
             try
             {
-                //Do this to prevent setting lighting again after the keyboard has been shutdown and reset
-                lock (action_lock)
+                if (!this.isInitialized)
+                    return false;
+
+                foreach (KeyValuePair<DeviceKeys, Color> key in keyColors)
                 {
-                    if (!this.isInitialized)
-                        return false;
-
-                    foreach (KeyValuePair<DeviceKeys, Color> key in keyColors)
-                    {
-                        if (e.Cancel) return false;
-
-
-                        Color clr = Color.FromArgb(255, Utils.ColorUtils.MultiplyColorByScalar(key.Value, key.Value.A / 255.0D));
-                        WootingKey.Keys devKey = DeviceKeyToWootingKey(key.Key);
-                        if (devKey == WootingKey.Keys.None)
-                            continue;
-                        //(byte row, byte column) coordinates = WootingRgbControl.KeyMap[devKey];
-                        //colourMap[coordinates.row, coordinates.column] = new KeyColour(clr.red, clr.green, clr.blue);
-                        
-                        RGBControl.SetKey(devKey, (byte)(clr.R * Global.Configuration.VarRegistry.GetVariable<int>($"{devicename}_scalar_r")/100),
-                                                  (byte)(clr.G * Global.Configuration.VarRegistry.GetVariable<int>($"{devicename}_scalar_g")/100),
-                                                  (byte)(clr.B * Global.Configuration.VarRegistry.GetVariable<int>($"{devicename}_scalar_b")/100));
-                    }
                     if (e.Cancel) return false;
-                    //AlsoWootingRgbControl.SetFull(colourMap);
-                    RGBControl.UpdateKeyboard();
+
+                    Color clr = CorrectAlpha(key.Value);
+                    WootingKey.Keys devKey = DeviceKeyToWootingKey(key.Key);
+                    if (devKey == WootingKey.Keys.None)
+                        continue;
+
+                    RGBControl.SetKey(devKey, (byte)(clr.R * variableRegistry.GetVariable<int>($"{DeviceName}_scalar_r") / 100),
+                                              (byte)(clr.G * variableRegistry.GetVariable<int>($"{DeviceName}_scalar_g") / 100),
+                                              (byte)(clr.B * variableRegistry.GetVariable<int>($"{DeviceName}_scalar_b") / 100));
                 }
+                if (e.Cancel)
+                    return false;
+
+                RGBControl.UpdateKeyboard();
                 return true;
             }
             catch (Exception exc)
             {
-                Global.logger.Error("Failed to Update Device" + exc.ToString());
+                LogError("Failed to Update Device" + exc.ToString());
                 return false;
             }
         }
 
-        public bool UpdateDevice(DeviceColorComposition colorComposition, DoWorkEventArgs e, bool forced = false)
+        protected override void RegisterVariables()
         {
-            watch.Restart();
-
-            bool update_result = UpdateDevice(colorComposition.keyColors, e, forced);
-
-            watch.Stop();
-            lastUpdateTime = watch.ElapsedMilliseconds;
-
-            return update_result;
-        }
-
-        public bool IsKeyboardConnected()
-        {
-            return isInitialized;
-        }
-
-        public bool IsPeripheralConnected()
-        {
-            return isInitialized;
-        }
-
-        public string GetDeviceUpdatePerformance()
-        {
-            return (isInitialized ? lastUpdateTime + " ms" : "");
-        }
-
-        public VariableRegistry GetRegisteredVariables()
-        {
-            if (default_registry == null)
-            {
-                default_registry = new VariableRegistry();
-                default_registry.Register($"{devicename}_scalar_r", 100, "Red Scalar", 100, 0);
-                default_registry.Register($"{devicename}_scalar_g", 100, "Green Scalar", 100, 0);
-                default_registry.Register($"{devicename}_scalar_b", 100, "Blue Scalar", 100, 0,"In percent");
-            }
-            return default_registry;
+            variableRegistry.Register($"{DeviceName}_scalar_r", 100, "Red Scalar", 100, 0);
+            variableRegistry.Register($"{DeviceName}_scalar_g", 100, "Green Scalar", 100, 0);
+            variableRegistry.Register($"{DeviceName}_scalar_b", 100, "Blue Scalar", 100, 0, "In percent");
         }
 
         public static Dictionary<DeviceKeys, WootingKey.Keys> KeyMap = new Dictionary<DeviceKeys, WootingKey.Keys> {

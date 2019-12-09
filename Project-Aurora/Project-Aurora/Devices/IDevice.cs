@@ -1418,8 +1418,13 @@ namespace Aurora.Devices
 
         private readonly Stopwatch watch = new Stopwatch();
         private long lastUpdateTime = 0;
+        protected VariableRegistry variableRegistry;
 
-        protected void Log(string s) => Global.logger.Info(s);
+        protected void LogInfo(string s) => Global.logger.Info(s);
+
+        protected void LogError(string s) => Global.logger.Error(s);
+
+        protected Color CorrectAlpha(Color clr) => Color.FromArgb(255, Utils.ColorUtils.MultiplyColorByScalar(clr, clr.A / 255.0D));
 
         public string GetDeviceDetails()
         {
@@ -1438,7 +1443,12 @@ namespace Aurora.Devices
 
         public VariableRegistry GetRegisteredVariables()
         {
-            return new VariableRegistry();
+            if(variableRegistry == null)
+            {
+                variableRegistry = new VariableRegistry();
+                RegisterVariables();
+            }
+            return variableRegistry;
         }
 
         public bool IsInitialized()
@@ -1484,10 +1494,24 @@ namespace Aurora.Devices
             Initialize();
         }
 
+        /// <summary>
+        /// Is called first. Initialize the device here
+        /// </summary>
         public abstract bool Initialize();
 
+        /// <summary>
+        /// Is called last. Dispose of the devices here
+        /// </summary>
         public abstract void Shutdown();
 
+        /// <summary>
+        /// Is called every frame (30fps). Update the device here
+        /// </summary>
         public abstract bool UpdateDevice(Dictionary<DeviceKeys, Color> keyColors, DoWorkEventArgs e, bool forced = false);
+
+        /// <summary>
+        /// Only called once when registering variables. Can be empty if not needed
+        /// </summary>
+        protected abstract void RegisterVariables();
     }
 }

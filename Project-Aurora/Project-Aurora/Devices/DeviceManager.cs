@@ -109,7 +109,6 @@ namespace Aurora.Devices
             DeviceContainers.Add(new DeviceContainer(new AtmoOrbDevice.AtmoOrbDevice()));
             DeviceContainers.Add(new DeviceContainer(new SteelSeries.SteelSeriesDevice()));
             DeviceContainers.Add(new DeviceContainer(new UnifiedHID.UnifiedHIDDevice()));
-            DeviceContainers.Add(new DeviceContainer(new Wooting.WootingDevice()));
             DeviceContainers.Add(new DeviceContainer(new Creative.SoundBlasterXDevice()));
             DeviceContainers.Add(new DeviceContainer(new LightFX.LightFxDevice()));
             DeviceContainers.Add(new DeviceContainer(new Dualshock.DualshockDevice()));
@@ -176,20 +175,27 @@ namespace Aurora.Devices
             {
                 foreach(var deviceDll in Directory.EnumerateFiles(deviceDllFolder, "*.dll"))
                 {
-                    var deviceAssembly = Assembly.LoadFrom(deviceDll);
-
-                    foreach (var type in deviceAssembly.GetExportedTypes())
+                    try
                     {
-                        if (typeof(IDevice).IsAssignableFrom(type))
-                        {
-                            IDevice devDll = (IDevice)Activator.CreateInstance(type);
+                        var deviceAssembly = Assembly.LoadFrom(deviceDll);
 
-                            DeviceContainers.Add(new DeviceContainer(devDll));
-                        }
-                        else
+                        foreach (var type in deviceAssembly.GetExportedTypes())
                         {
-                            Global.logger.Error("Error loading device dll: " + deviceDll);
+                            if (typeof(IDevice).IsAssignableFrom(type))
+                            {
+                                IDevice devDll = (IDevice)Activator.CreateInstance(type);
+
+                                DeviceContainers.Add(new DeviceContainer(devDll));
+                            }
+                            else
+                            {
+                                Global.logger.Error("Error loading device dll: " + deviceDll);
+                            }
                         }
+                    }
+                    catch
+                    {
+                        //there will most likely be sdk dlls and stuff like that we can safely ignore
                     }
                 }
             }

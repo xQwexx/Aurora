@@ -14,14 +14,14 @@ namespace Device_Example
 
         public override bool Initialize()
         {
-            Log("Initializing example!");
+            LogInfo("Initializing example!");
 
             return isInitialized = true;
         }
 
         public override void Shutdown()
         {
-            Log("Shutting down example!");
+            LogInfo("Shutting down example!");
 
             isInitialized = false;
         }
@@ -31,5 +31,8 @@ namespace Device_Example
             //Log("Updating!");
             return true;
         }
+
+        protected override void RegisterVariables()
+        { }
     }
 }
