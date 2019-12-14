@@ -100,22 +100,22 @@ namespace Aurora.Devices
 
         public DeviceManager()
         {
-            DeviceContainers.Add(new DeviceContainer(new Logitech.LogitechDevice()));
-            DeviceContainers.Add(new DeviceContainer(new Corsair.CorsairDevice()));
-            DeviceContainers.Add(new DeviceContainer(new Razer.RazerDevice()));
-            DeviceContainers.Add(new DeviceContainer(new Roccat.RoccatDevice()));
-            DeviceContainers.Add(new DeviceContainer(new Clevo.ClevoDevice()));
-            DeviceContainers.Add(new DeviceContainer(new CoolerMaster.CoolerMasterDevice()));
-            DeviceContainers.Add(new DeviceContainer(new AtmoOrbDevice.AtmoOrbDevice()));
-            DeviceContainers.Add(new DeviceContainer(new SteelSeries.SteelSeriesDevice()));
-            DeviceContainers.Add(new DeviceContainer(new UnifiedHID.UnifiedHIDDevice()));
-            DeviceContainers.Add(new DeviceContainer(new Creative.SoundBlasterXDevice()));
-            DeviceContainers.Add(new DeviceContainer(new LightFX.LightFxDevice()));
-            DeviceContainers.Add(new DeviceContainer(new Drevo.DrevoDevice()));
-            DeviceContainers.Add(new DeviceContainer(new YeeLight.YeeLightDevice()));
-            DeviceContainers.Add(new DeviceContainer(new Asus.AsusDevice()));
-            DeviceContainers.Add(new DeviceContainer(new NZXT.NZXTDevice()));
-            DeviceContainers.Add(new DeviceContainer(new Vulcan.VulcanDevice()));
+            //DeviceContainers.Add(new DeviceContainer(new Logitech.LogitechDevice()));
+            //DeviceContainers.Add(new DeviceContainer(new Corsair.CorsairDevice()));
+            //DeviceContainers.Add(new DeviceContainer(new Razer.RazerDevice()));
+            //DeviceContainers.Add(new DeviceContainer(new Roccat.RoccatDevice()));
+            //DeviceContainers.Add(new DeviceContainer(new Clevo.ClevoDevice()));
+            //DeviceContainers.Add(new DeviceContainer(new CoolerMaster.CoolerMasterDevice()));
+            //DeviceContainers.Add(new DeviceContainer(new AtmoOrbDevice.AtmoOrbDevice()));
+            //DeviceContainers.Add(new DeviceContainer(new SteelSeries.SteelSeriesDevice()));
+            //DeviceContainers.Add(new DeviceContainer(new UnifiedHID.UnifiedHIDDevice()));
+            //DeviceContainers.Add(new DeviceContainer(new Creative.SoundBlasterXDevice()));
+            //DeviceContainers.Add(new DeviceContainer(new LightFX.LightFxDevice()));
+            //DeviceContainers.Add(new DeviceContainer(new Drevo.DrevoDevice()));
+            //DeviceContainers.Add(new DeviceContainer(new YeeLight.YeeLightDevice()));
+            //DeviceContainers.Add(new DeviceContainer(new Asus.AsusDevice()));
+            //DeviceContainers.Add(new DeviceContainer(new NZXT.NZXTDevice()));
+            //DeviceContainers.Add(new DeviceContainer(new Vulcan.VulcanDevice()));
 
             string devices_scripts_path = System.IO.Path.Combine(Global.ExecutingDirectory, "Scripts", "Devices");
 
@@ -172,7 +172,7 @@ namespace Aurora.Devices
             Global.logger.Info("Loading Device Plugins");
             if (Directory.Exists(deviceDllFolder))
             {
-                foreach(var deviceDll in Directory.EnumerateFiles(deviceDllFolder, "*.dll"))
+                foreach(var deviceDll in Directory.EnumerateFiles(deviceDllFolder, "Device-*.dll"))
                 {
                     try
                     {
