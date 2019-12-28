@@ -14,7 +14,9 @@ namespace Device_Vulcan
     {
         protected override string DeviceName => "Vulcan";
 
-        public override bool Initialize() => isInitialized = VulcanKeyboard.Initialize();
+        protected override bool isInitialized => VulcanKeyboard.IsConnected;
+
+        public override bool Initialize() => VulcanKeyboard.Initialize();
 
         public override void Shutdown() => VulcanKeyboard.Disconnect();
 

@@ -1414,7 +1414,7 @@ namespace Aurora.Devices
     {
         protected abstract string DeviceName { get; }
 
-        protected bool isInitialized;
+        protected virtual bool isInitialized { get; set; }
 
         private readonly Stopwatch watch = new Stopwatch();
 
