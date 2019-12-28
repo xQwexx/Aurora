@@ -1499,6 +1499,14 @@ namespace Aurora.Devices
         }
 
         /// <summary>
+        /// Only called once when registering variables. Can be empty if not needed
+        /// </summary>
+        protected virtual void RegisterVariables(VariableRegistry local)
+        {
+            //purposefully empty, if varibles are needed, this should be overridden
+        }
+
+        /// <summary>
         /// Is called first. Initialize the device here
         /// </summary>
         public abstract bool Initialize();
@@ -1512,10 +1520,5 @@ namespace Aurora.Devices
         /// Is called every frame (30fps). Update the device here
         /// </summary>
         public abstract bool UpdateDevice(Dictionary<DeviceKeys, Color> keyColors, DoWorkEventArgs e, bool forced = false);
-
-        /// <summary>
-        /// Only called once when registering variables. Can be empty if not needed
-        /// </summary>
-        protected abstract void RegisterVariables(VariableRegistry local);
     }
 }

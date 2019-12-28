@@ -100,7 +100,6 @@ namespace Aurora.Devices
 
         public DeviceManager()
         {
-            //DeviceContainers.Add(new DeviceContainer(new Logitech.LogitechDevice()));
             //DeviceContainers.Add(new DeviceContainer(new Corsair.CorsairDevice()));
             //DeviceContainers.Add(new DeviceContainer(new Razer.RazerDevice()));
             //DeviceContainers.Add(new DeviceContainer(new Roccat.RoccatDevice()));
@@ -115,7 +114,6 @@ namespace Aurora.Devices
             //DeviceContainers.Add(new DeviceContainer(new YeeLight.YeeLightDevice()));
             //DeviceContainers.Add(new DeviceContainer(new Asus.AsusDevice()));
             //DeviceContainers.Add(new DeviceContainer(new NZXT.NZXTDevice()));
-            //DeviceContainers.Add(new DeviceContainer(new Vulcan.VulcanDevice()));
 
             string devices_scripts_path = System.IO.Path.Combine(Global.ExecutingDirectory, "Scripts", "Devices");
 
