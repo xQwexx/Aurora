@@ -113,9 +113,9 @@ namespace Aurora.Settings.Layers
                 }
                 else
                 {
-                    Devices.Logitech.Logitech_keyboardBitmapKeys logi_key = Devices.Logitech.LogitechDevice.ToLogitechBitmap(key);
+                    DeviceKeysUtils.Logitech.keyboardBitmapKeys logi_key = DeviceKeysUtils.Logitech.ToLogitechBitmap(key);
 
-                    if (logi_key != Devices.Logitech.Logitech_keyboardBitmapKeys.UNKNOWN && bitmap.Length > 0) {
+                    if (logi_key != DeviceKeysUtils.Logitech.keyboardBitmapKeys.UNKNOWN && bitmap.Length > 0) {
                         var color = GetBoostedColor(Utils.ColorUtils.GetColorFromInt(bitmap[(int)logi_key / 4]));
                         bitmap_layer.Set(key, color);
 
@@ -242,16 +242,16 @@ namespace Aurora.Settings.Layers
             }
             else if (ngw_state.Command.Equals("SetLightingForKeyWithKeyName") || ngw_state.Command.Equals("SetLightingForKeyWithScanCode"))
             {
-                var bitmap_key = Devices.Logitech.LogitechDevice.ToLogitechBitmap((LedCSharp.keyboardNames)(ngw_state.Command_Data.key));
+                var bitmap_key = DeviceKeysUtils.Logitech.ToLogitechBitmap((DeviceKeysUtils.Logitech.keyboardNames)(ngw_state.Command_Data.key));
 
-                if (bitmap_key != Devices.Logitech.Logitech_keyboardBitmapKeys.UNKNOWN)
+                if (bitmap_key != DeviceKeysUtils.Logitech.keyboardBitmapKeys.UNKNOWN)
                 {
                     bitmap[(int)bitmap_key / 4] = (int)(((int)ngw_state.Command_Data.red_start << 16) | ((int)ngw_state.Command_Data.green_start << 8) | ((int)ngw_state.Command_Data.blue_start));
                 }
             }
             else if (ngw_state.Command.Equals("FlashSingleKey"))
             {
-                Devices.DeviceKeys dev_key = Devices.Logitech.LogitechDevice.ToDeviceKey((LedCSharp.keyboardNames)(ngw_state.Command_Data.key));
+                Devices.DeviceKeys dev_key = DeviceKeysUtils.Logitech.ToDeviceKey((DeviceKeysUtils.Logitech.keyboardNames)(ngw_state.Command_Data.key));
                 LogiFlashSingleKey neweffect = new LogiFlashSingleKey(dev_key, Color.FromArgb(ngw_state.Command_Data.red_start, ngw_state.Command_Data.green_start, ngw_state.Command_Data.blue_start),
                         ngw_state.Command_Data.duration,
                         ngw_state.Command_Data.interval
@@ -265,7 +265,7 @@ namespace Aurora.Settings.Layers
             }
             else if (ngw_state.Command.Equals("PulseSingleKey"))
             {
-                Devices.DeviceKeys dev_key = Devices.Logitech.LogitechDevice.ToDeviceKey((LedCSharp.keyboardNames)(ngw_state.Command_Data.key));
+                Devices.DeviceKeys dev_key = DeviceKeysUtils.Logitech.ToDeviceKey((DeviceKeysUtils.Logitech.keyboardNames)(ngw_state.Command_Data.key));
                 long duration = ngw_state.Command_Data.interval == 0 ? 0 : ngw_state.Command_Data.duration;
 
                 LogiPulseSingleKey neweffect = new LogiPulseSingleKey(dev_key, Color.FromArgb(ngw_state.Command_Data.red_start, ngw_state.Command_Data.green_start, ngw_state.Command_Data.blue_start),
