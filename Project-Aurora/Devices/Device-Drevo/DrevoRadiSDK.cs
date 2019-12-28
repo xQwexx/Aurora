@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 
-
-namespace DrevoRadi
+namespace Device_Drevo
 {
-    public class DrevoRadiSDK
+    public static class DrevoRadiSDK
     {
         [DllImport("DrevoRadi", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool DrevoRadiInit();

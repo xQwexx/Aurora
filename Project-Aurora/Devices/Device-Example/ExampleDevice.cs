@@ -35,7 +35,7 @@ namespace Device_Example
 
         protected override void RegisterVariables(VariableRegistry local)
         {
-            local.Register("example variable", new VariableRegistryItem());
+            local.Register($"{DeviceName}_devicekey", DeviceKeys.Peripheral, "Key to Use", DeviceKeys.MOUSEPADLIGHT15, DeviceKeys.Peripheral_Logo);
         }
     }
 }

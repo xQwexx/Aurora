@@ -369,7 +369,6 @@
       <DependentUpon>Control_FieldPresenter.xaml</DependentUpon>
     </Compile>
     <Compile Include="Devices\UnifiedHID\RoccatTyon.cs" />
-    <Compile Include="Devices\Vulcan\Vulcan.cs" />
     <Compile Include="Profiles\RocketLeague\GSI\Nodes\Team.cs" />
     <Compile Include="Profiles\RocketLeague\Layers\RocketLeagueGoalExplosionLayerHandler.cs" />
     <Compile Include="Profiles\Osu\GSI\Enums.cs" />
