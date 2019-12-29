@@ -1,15 +1,15 @@
 using Aurora.Profiles;
 using CSScriptLibrary;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Threading;
-using Microsoft.Win32;
-using System.Reflection;
 using System.Linq;
+using System.Reflection;
+using System.Threading;
 
 namespace Aurora.Devices
 {
@@ -100,7 +100,6 @@ namespace Aurora.Devices
 
         public DeviceManager()
         {
-            //DeviceContainers.Add(new DeviceContainer(new Corsair.CorsairDevice()));
             //DeviceContainers.Add(new DeviceContainer(new Razer.RazerDevice()));
             //DeviceContainers.Add(new DeviceContainer(new Roccat.RoccatDevice()));
             //DeviceContainers.Add(new DeviceContainer(new Clevo.ClevoDevice()));
@@ -169,7 +168,7 @@ namespace Aurora.Devices
             Global.logger.Info("Loading Device Plugins");
             if (Directory.Exists(deviceDllFolder))
             {
-                foreach(var deviceDll in Directory.EnumerateFiles(deviceDllFolder, "Device-*.dll"))
+                foreach (var deviceDll in Directory.EnumerateFiles(deviceDllFolder, "Device-*.dll"))
                 {
                     try
                     {
