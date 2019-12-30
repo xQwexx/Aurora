@@ -103,7 +103,6 @@ namespace Aurora.Devices
             //DeviceContainers.Add(new DeviceContainer(new Razer.RazerDevice()));
             //DeviceContainers.Add(new DeviceContainer(new Roccat.RoccatDevice()));
             //DeviceContainers.Add(new DeviceContainer(new Clevo.ClevoDevice()));
-            //DeviceContainers.Add(new DeviceContainer(new CoolerMaster.CoolerMasterDevice()));
             //DeviceContainers.Add(new DeviceContainer(new AtmoOrbDevice.AtmoOrbDevice()));
             //DeviceContainers.Add(new DeviceContainer(new SteelSeries.SteelSeriesDevice()));
             //DeviceContainers.Add(new DeviceContainer(new UnifiedHID.UnifiedHIDDevice()));
