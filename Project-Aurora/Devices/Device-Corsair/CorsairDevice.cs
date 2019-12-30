@@ -42,6 +42,7 @@ namespace Device_Corsair
         public override void Shutdown()
         {
             isInitialized = false;
+            deviceInfos.Clear();
             CUE.ReleaseControl();
         }
 
