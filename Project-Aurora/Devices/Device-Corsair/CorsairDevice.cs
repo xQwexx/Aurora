@@ -26,8 +26,7 @@ namespace Device_Corsair
                 return isInitialized = false;
             }
 
-            int count = CUE.GetDeviceCount();
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < CUE.GetDeviceCount(); i++)
                 deviceInfos.Add(CUE.GetDeviceInfo(i));
 
             if (!CUE.RequestControl())
@@ -48,26 +47,59 @@ namespace Device_Corsair
 
         public override bool UpdateDevice(Dictionary<DeviceKeys, Color> keyColors, DoWorkEventArgs e, bool forced = false)
         {
+            for (int i = 0; i < deviceInfos.Count; i++)
+                SetDeviceColors(deviceInfos[i].Type, i, keyColors);
+
+            return CUE.Update();
+        }
+
+        private bool SetDeviceColors(CorsairDeviceType type, int index, Dictionary<DeviceKeys, Color> keyColors)
+        {
+            var dict = GetLedMap(type);
+            if (dict.Count == 0)
+                return false;
+
             List<CorsairLedColor> colors = new List<CorsairLedColor>();
-            foreach (var asd in keyColors)
+            foreach (var led in keyColors)
             {
-                if (KeyMap.TryGetValue(asd.Key, out var ledid))
+                if (dict.TryGetValue(led.Key, out var ledid))
                 {
                     colors.Add(new CorsairLedColor()
                     {
                         LedId = ledid,
-                        R = asd.Value.R,
-                        G = asd.Value.G,
-                        B = asd.Value.B
+                        R = led.Value.R,
+                        G = led.Value.G,
+                        B = led.Value.B
                     });
                 }
             }
-
-            CUE.SetLedColors(colors.ToArray());
-            return CUE.Update();
+            return CUE.SetDeviceColors(index, colors.ToArray());
         }
 
-        private static readonly Dictionary<DeviceKeys, CorsairLedId> KeyMap = new Dictionary<DeviceKeys, CorsairLedId>()
+        private Dictionary<DeviceKeys, CorsairLedId> GetLedMap(CorsairDeviceType t)
+        {
+            switch (t)
+            {
+                case CorsairDeviceType.Keyboard:
+                    return KeyboardLedMap;
+                case CorsairDeviceType.Mouse:
+                    return MouseLedMap;
+                case CorsairDeviceType.MouseMat:
+                    return MouseMatLedMap;
+                case CorsairDeviceType.HeadsetStand:
+                    return HeadsetStandLedMap;
+                case CorsairDeviceType.Headset:
+                    return HeadsetLedMap;
+                case CorsairDeviceType.Cooler:
+                case CorsairDeviceType.CommanderPro:
+                case CorsairDeviceType.LightingNodePro:
+                case CorsairDeviceType.MemoryModule:
+                default:
+                    return new Dictionary<DeviceKeys, CorsairLedId>();
+            }
+        }
+
+        private static readonly Dictionary<DeviceKeys, CorsairLedId> KeyboardLedMap = new Dictionary<DeviceKeys, CorsairLedId>()
         {
             [DeviceKeys.ESC] = CorsairLedId.K_Escape,
             [DeviceKeys.F1] = CorsairLedId.K_F1,
@@ -216,6 +248,54 @@ namespace Device_Corsair
             //  [DeviceKeys.International5] = CorsairLedId.K_International5,
             //  [DeviceKeys.International4] = CorsairLedId.K_International4,
             [DeviceKeys.FN_Key] = CorsairLedId.K_Fn
+        };
+
+        private static readonly Dictionary<DeviceKeys, CorsairLedId> MouseLedMap = new Dictionary<DeviceKeys, CorsairLedId>()
+        {
+            [DeviceKeys.Peripheral_Logo] = CorsairLedId.M_1,
+            [DeviceKeys.Peripheral_FrontLight] = CorsairLedId.M_2,
+            [DeviceKeys.Peripheral_ScrollWheel] = CorsairLedId.M_3,
+            [DeviceKeys.ADDITIONALLIGHT1] = CorsairLedId.M_4,//TODO
+            [DeviceKeys.ADDITIONALLIGHT2] = CorsairLedId.M_5,
+            [DeviceKeys.ADDITIONALLIGHT3] = CorsairLedId.M_6
+        };
+
+        private static readonly Dictionary<DeviceKeys, CorsairLedId> MouseMatLedMap = new Dictionary<DeviceKeys, CorsairLedId>()
+        {
+            [DeviceKeys.MOUSEPADLIGHT1] = CorsairLedId.MM_Zone1,
+            [DeviceKeys.MOUSEPADLIGHT2] = CorsairLedId.MM_Zone2,
+            [DeviceKeys.MOUSEPADLIGHT3] = CorsairLedId.MM_Zone3,
+            [DeviceKeys.MOUSEPADLIGHT4] = CorsairLedId.MM_Zone4,
+            [DeviceKeys.MOUSEPADLIGHT5] = CorsairLedId.MM_Zone5,
+            [DeviceKeys.MOUSEPADLIGHT6] = CorsairLedId.MM_Zone6,
+            [DeviceKeys.MOUSEPADLIGHT7] = CorsairLedId.MM_Zone7,
+            [DeviceKeys.MOUSEPADLIGHT8] = CorsairLedId.MM_Zone8,
+            [DeviceKeys.MOUSEPADLIGHT9] = CorsairLedId.MM_Zone9,
+            [DeviceKeys.MOUSEPADLIGHT10] = CorsairLedId.MM_Zone10,
+            [DeviceKeys.MOUSEPADLIGHT11] = CorsairLedId.MM_Zone11,
+            [DeviceKeys.MOUSEPADLIGHT12] = CorsairLedId.MM_Zone12,
+            [DeviceKeys.MOUSEPADLIGHT13] = CorsairLedId.MM_Zone13,
+            [DeviceKeys.MOUSEPADLIGHT14] = CorsairLedId.MM_Zone14,
+            [DeviceKeys.MOUSEPADLIGHT15] = CorsairLedId.MM_Zone15
+        };
+
+        private static readonly Dictionary<DeviceKeys, CorsairLedId> HeadsetStandLedMap = new Dictionary<DeviceKeys, CorsairLedId>()
+        {
+            [DeviceKeys.Peripheral_Logo] = CorsairLedId.HSS_Zone1,
+            [DeviceKeys.MOUSEPADLIGHT15] = CorsairLedId.HSS_Zone2,
+            [DeviceKeys.MOUSEPADLIGHT13] = CorsairLedId.HSS_Zone3,
+            [DeviceKeys.MOUSEPADLIGHT11] = CorsairLedId.HSS_Zone4,
+            [DeviceKeys.MOUSEPADLIGHT9] = CorsairLedId.HSS_Zone5,
+            [DeviceKeys.MOUSEPADLIGHT7] = CorsairLedId.HSS_Zone6,
+            [DeviceKeys.MOUSEPADLIGHT5] = CorsairLedId.HSS_Zone7,
+            [DeviceKeys.MOUSEPADLIGHT3] = CorsairLedId.HSS_Zone8,
+            [DeviceKeys.MOUSEPADLIGHT1] = CorsairLedId.HSS_Zone9,
+        };
+
+        private static readonly Dictionary<DeviceKeys, CorsairLedId> HeadsetLedMap = new Dictionary<DeviceKeys, CorsairLedId>()
+        {
+            [DeviceKeys.Peripheral_FrontLight] = CorsairLedId.H_LeftLogo,//TODO
+            [DeviceKeys.Peripheral_ScrollWheel] = CorsairLedId.H_RightLogo
         };
     }
 }
