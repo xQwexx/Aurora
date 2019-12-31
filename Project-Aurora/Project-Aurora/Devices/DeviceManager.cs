@@ -181,15 +181,11 @@ namespace Aurora.Devices
 
                                 DeviceContainers.Add(new DeviceContainer(devDll));
                             }
-                            else
-                            {
-                                Global.logger.Error("Error loading device dll: " + deviceDll);
-                            }
                         }
                     }
                     catch
                     {
-                        //there will most likely be sdk dlls and stuff like that we can safely ignore
+                        Global.logger.Error("Error loading device dll: " + deviceDll);
                     }
                 }
             }
