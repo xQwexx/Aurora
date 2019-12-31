@@ -159,6 +159,8 @@ namespace Device_Corsair
             //  [DeviceKeys.International5] = CorsairLedId.K_International5,
             //  [DeviceKeys.International4] = CorsairLedId.K_International4,
             [DeviceKeys.FN_Key] = CorsairLedId.K_Fn,
+            [DeviceKeys.LOCK_SWITCH] = CorsairLedId.K_WinLock,
+            [DeviceKeys.BRIGHTNESS_SWITCH] = CorsairLedId.K_Brightness,
             [DeviceKeys.ADDITIONALLIGHT1] = CorsairLedId.KLP_Zone1,
             [DeviceKeys.ADDITIONALLIGHT2] = CorsairLedId.KLP_Zone2,
             [DeviceKeys.ADDITIONALLIGHT3] = CorsairLedId.KLP_Zone3,
