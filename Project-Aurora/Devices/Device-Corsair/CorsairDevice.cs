@@ -91,6 +91,7 @@ namespace Device_Corsair
                 case CorsairDeviceType.Headset:
                     return HeadsetLedMap;
                 case CorsairDeviceType.Cooler:
+                    return CoolerLedMap;
                 case CorsairDeviceType.CommanderPro:
                 case CorsairDeviceType.LightingNodePro:
                 case CorsairDeviceType.MemoryModule:
@@ -247,7 +248,26 @@ namespace Device_Corsair
             [DeviceKeys.G18] = CorsairLedId.K_G18,
             //  [DeviceKeys.International5] = CorsairLedId.K_International5,
             //  [DeviceKeys.International4] = CorsairLedId.K_International4,
-            [DeviceKeys.FN_Key] = CorsairLedId.K_Fn
+            [DeviceKeys.FN_Key] = CorsairLedId.K_Fn,
+            [DeviceKeys.ADDITIONALLIGHT1] = CorsairLedId.KLP_Zone1,
+            [DeviceKeys.ADDITIONALLIGHT2] = CorsairLedId.KLP_Zone2,
+            [DeviceKeys.ADDITIONALLIGHT3] = CorsairLedId.KLP_Zone3,
+            [DeviceKeys.ADDITIONALLIGHT4] = CorsairLedId.KLP_Zone4,
+            [DeviceKeys.ADDITIONALLIGHT5] = CorsairLedId.KLP_Zone5,
+            [DeviceKeys.ADDITIONALLIGHT6] = CorsairLedId.KLP_Zone6,
+            [DeviceKeys.ADDITIONALLIGHT7] = CorsairLedId.KLP_Zone7,
+            [DeviceKeys.ADDITIONALLIGHT8] = CorsairLedId.KLP_Zone8,
+            [DeviceKeys.ADDITIONALLIGHT9] = CorsairLedId.KLP_Zone9,
+            [DeviceKeys.ADDITIONALLIGHT10] = CorsairLedId.KLP_Zone10,
+            [DeviceKeys.ADDITIONALLIGHT11] = CorsairLedId.KLP_Zone11,
+            [DeviceKeys.ADDITIONALLIGHT12] = CorsairLedId.KLP_Zone12,
+            [DeviceKeys.ADDITIONALLIGHT13] = CorsairLedId.KLP_Zone13,
+            [DeviceKeys.ADDITIONALLIGHT14] = CorsairLedId.KLP_Zone14,
+            [DeviceKeys.ADDITIONALLIGHT15] = CorsairLedId.KLP_Zone15,
+            [DeviceKeys.ADDITIONALLIGHT16] = CorsairLedId.KLP_Zone16,
+            [DeviceKeys.ADDITIONALLIGHT17] = CorsairLedId.KLP_Zone17,
+            [DeviceKeys.ADDITIONALLIGHT18] = CorsairLedId.KLP_Zone18,
+            [DeviceKeys.ADDITIONALLIGHT19] = CorsairLedId.KLP_Zone19
         };
 
         private static readonly Dictionary<DeviceKeys, CorsairLedId> MouseLedMap = new Dictionary<DeviceKeys, CorsairLedId>()
@@ -296,6 +316,11 @@ namespace Device_Corsair
         {
             [DeviceKeys.Peripheral_FrontLight] = CorsairLedId.H_LeftLogo,//TODO
             [DeviceKeys.Peripheral_ScrollWheel] = CorsairLedId.H_RightLogo
+        };
+
+        private static readonly Dictionary<DeviceKeys, CorsairLedId> CoolerLedMap = new Dictionary<DeviceKeys, CorsairLedId>()
+        {
+            [DeviceKeys.Peripheral_FrontLight] = CorsairLedId.LC_C1_1,//TODO
         };
     }
 }
