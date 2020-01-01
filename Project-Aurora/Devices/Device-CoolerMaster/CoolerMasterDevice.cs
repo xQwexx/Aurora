@@ -27,29 +27,13 @@ namespace Device_CoolerMaster
 
         public override bool Initialize()
         {
-            LogInfo("Trying to init cm sdk with version: v" + Native.GetCM_SDK_DllVer());
             foreach (var device in Native.DEVICES.Where(d => d != Native.DEVICE_INDEX.DEFAULT))
             {
-                LogInfo("Trying to connect to: " + Enum.GetName(typeof(Native.DEVICE_INDEX), device));
-                //Native.SetControlDevice(device);
-                if (Native.IsDevicePlug(device))
-                {
-                    LogInfo("------Device Plugged In!--------");
-                    if (Native.EnableLedControl(true, device))
-                    {
-                        LogInfo("------Enabled LED control!--------");
-
-                        InitializedDevices.Add(device);
-                    }
-                    else
-                    {
-                        LogInfo("------FAILED to enable led control--------");
-                    }
-                }
-                else { LogInfo("failed connection"); }
+                if (Native.IsDevicePlug(device) && Native.EnableLedControl(true, device))
+                    InitializedDevices.Add(device);
             }
-            LogInfo("yes" + InitializedDevices.Count);
-            return InitializedDevices.Any();
+
+            return isInitialized = InitializedDevices.Any();
         }
 
         public override void Shutdown()
