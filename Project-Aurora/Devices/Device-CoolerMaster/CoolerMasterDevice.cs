@@ -40,6 +40,8 @@ namespace Device_CoolerMaster
         {
             foreach (var dev in InitializedDevices)
                 Native.EnableLedControl(false, dev);
+
+            isInitialized = false;
         }
 
         public override bool UpdateDevice(Dictionary<DK, Color> keyColors, DoWorkEventArgs e, bool forced = false)

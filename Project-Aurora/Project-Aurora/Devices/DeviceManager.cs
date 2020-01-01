@@ -183,9 +183,9 @@ namespace Aurora.Devices
                             }
                         }
                     }
-                    catch
+                    catch(Exception e)
                     {
-                        Global.logger.Error("Error loading device dll: " + deviceDll);
+                        Global.logger.Error($"Error loading device dll: {deviceDll}. Exception: {e.Message}");
                     }
                 }
             }
