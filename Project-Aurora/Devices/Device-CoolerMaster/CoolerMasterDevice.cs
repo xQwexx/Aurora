@@ -12,11 +12,6 @@ namespace Device_CoolerMaster
     {
         protected override string DeviceName => "CoolerMaster";
         private readonly List<Native.DEVICE_INDEX> InitializedDevices = new List<Native.DEVICE_INDEX>();
-        private readonly Native.COLOR_MATRIX colors =
-            new Native.COLOR_MATRIX()
-            {
-                KeyColor = new Native.KEY_COLOR[Native.MAX_LED_ROW, Native.MAX_LED_COLUMN]
-            };
 
         public override string GetDeviceDetails()
         {
@@ -48,16 +43,16 @@ namespace Device_CoolerMaster
         {
             foreach (var dev in InitializedDevices)
             {
-                if (LayoutMapping.TryGetValue(dev, out var dict))
+                Native.COLOR_MATRIX colors = Native.NewColorMatrix();
+                if (!LayoutMapping.TryGetValue(dev, out var dict))
+                    dict = GenericKeyCoords;
+
+                foreach (var pair in keyColors)
                 {
-                    foreach (var pair in keyColors)
-                    {
-                        if (dict.TryGetValue(pair.Key, out var c))
-                        {
-                            colors.KeyColor[c.row, c.column] = new Native.KEY_COLOR(CorrectAlpha(pair.Value));
-                        }
-                    }
+                    if (dict.TryGetValue(pair.Key, out var c))
+                        colors.KeyColor[c.row, c.column] = new Native.KEY_COLOR(CorrectAlpha(pair.Value));
                 }
+
                 Native.SetAllLedColor(colors, dev);
             }
             return true;
@@ -449,8 +444,18 @@ namespace Device_CoolerMaster
                 [DK.Peripheral_Logo] = (0, 0),
                 [DK.Peripheral_ScrollWheel] = (0, 1)
             },
-            [Native.DEVICE_INDEX.MM520] = new Dictionary<DK, (int row, int column)>(),
-            [Native.DEVICE_INDEX.MM530] = new Dictionary<DK, (int row, int column)>(),
+            [Native.DEVICE_INDEX.MM520] = new Dictionary<DK, (int row, int column)>()
+            {
+                [DK.Peripheral_Logo] = (0, 0),
+                [DK.Peripheral_ScrollWheel] = (0, 1),
+                [DK.Peripheral_FrontLight] = (0, 2),
+            },
+            [Native.DEVICE_INDEX.MM530] = new Dictionary<DK, (int row, int column)>() 
+            {
+                [DK.Peripheral_Logo] = (0, 0),
+                [DK.Peripheral_ScrollWheel] = (0, 1),
+                [DK.Peripheral_FrontLight] = (0, 2),
+            },
             [Native.DEVICE_INDEX.MM830] = new Dictionary<DK, (int row, int column)>()
         };
     }
