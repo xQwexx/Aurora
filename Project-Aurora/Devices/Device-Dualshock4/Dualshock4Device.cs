@@ -36,10 +36,12 @@ namespace Device_Dualshock4
             Battery = device.Battery;
             Latency = device.Latency;
             Charging = device.Charging;
-
-            state.LightBarExplicitlyOff = sendColor.R == 0 && sendColor.G == 0 && sendColor.B == 0;
-            state.LightBarColor = new DS4Color(sendColor);
-            device.pushHapticState(state);
+            if(!ColorsEqual(sendColor, state.LightBarColor))
+            {
+                state.LightBarExplicitlyOff = sendColor.R == 0 && sendColor.G == 0 && sendColor.B == 0;
+                state.LightBarColor = new DS4Color(sendColor);
+                device.pushHapticState(state);
+            }
         }
 
         public void Disconnect(bool stop)
@@ -77,6 +79,13 @@ namespace Device_Dualshock4
             details += "🔋" + Battery + "% Delay: " + Latency.ToString("0.00") + " ms";
             return details;
         }
+
+        private bool ColorsEqual(Color clr, DS4Color ds4clr)
+        {
+            return clr.R == ds4clr.red &&
+                    clr.G == ds4clr.green &&
+                    clr.B == ds4clr.blue;
+        }
     }
 
     public class Dualshock4Device : Device
@@ -110,10 +119,10 @@ namespace Device_Dualshock4
 
             key = GlobalVarRegistry.GetVariable<DeviceKeys>($"{DeviceName}_devicekey");
             DS4Devices.findControllers();
-            var devices = DS4Devices.getDS4Controllers();
+            var controllers = DS4Devices.getDS4Controllers();
 
-            foreach (var dev in devices)
-                Devices.Add(new DS4Container(dev));
+            foreach (var controller in controllers)
+                Devices.Add(new DS4Container(controller));
 
             return isInitialized = Devices.Any();
         }
