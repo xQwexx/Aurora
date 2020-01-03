@@ -21,10 +21,8 @@ namespace Device_Asus
                 if (!LedMap.Keys.Contains(key.Key))
                     continue;
 
-                foreach (int ledIndex in ((List<int>)LedMap[key.Key]))
-                {
-                    SetRGBColor(Device.Lights[ledIndex], key.Value);
-                }
+                ushort ledIndex = (ushort)LedMap[key.Key];
+                SetRGBColor(Device.Lights[ledIndex], key.Value);
             }
 
             Device.Apply();
@@ -35,13 +33,13 @@ namespace Device_Asus
         {
             int ledCount = Device.Lights.Count;
 
-            for (int i = 0; i < ledCount; i++)
+            for (ushort i = 0; i < ledCount; i++)
             {
                 LedMap[AsusLedIdMapper(i)] = i;
             }
 
         }
-        private DeviceKeys AsusLedIdMapper(int lightIndex)
+        private DeviceKeys AsusLedIdMapper(ushort lightIndex)
         {
             switch (lightIndex)
             {
