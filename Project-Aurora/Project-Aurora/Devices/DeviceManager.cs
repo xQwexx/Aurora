@@ -171,7 +171,7 @@ namespace Aurora.Devices
                 {
                     try
                     {
-                        var deviceAssembly = Assembly.LoadFrom(deviceDll);
+                        var deviceAssembly = Assembly.LoadFile(deviceDll);
 
                         foreach (var type in deviceAssembly.GetExportedTypes())
                         {
