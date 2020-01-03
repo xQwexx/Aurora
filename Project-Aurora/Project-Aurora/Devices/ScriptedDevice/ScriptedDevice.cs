@@ -9,7 +9,7 @@ using Microsoft.Win32.TaskScheduler;
 
 namespace Aurora.Devices.ScriptedDevice
 {
-    public class ScriptedDevice : IDevice
+    public class ScriptedDevice : Aurora.Devices.Device
     {
         private bool crashed = false;
         private readonly dynamic script = null;
@@ -19,6 +19,8 @@ namespace Aurora.Devices.ScriptedDevice
 
         private System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
         private long lastUpdateTime = 0;
+
+        protected override string DeviceName => devicename;
 
         public ScriptedDevice(dynamic script)
         {
@@ -41,7 +43,7 @@ namespace Aurora.Devices.ScriptedDevice
             }
         }
 
-        public string GetDeviceDetails()
+        public override string GetDeviceDetails()
         {
             if (crashed)
                 return devicename + ": Error!";
@@ -52,12 +54,7 @@ namespace Aurora.Devices.ScriptedDevice
                 return devicename + ": Not initialized";
         }
 
-        public string GetDeviceName()
-        {
-            return devicename;
-        }
-
-        public bool Initialize()
+        public override bool Initialize()
         {
             if (!isInitialized)
             {
@@ -78,12 +75,12 @@ namespace Aurora.Devices.ScriptedDevice
             return isInitialized && !crashed;
         }
 
-        public bool IsConnected()
+        public override bool IsConnected()
         {
             throw new NotImplementedException();
         }
 
-        public bool IsInitialized()
+        public override bool IsInitialized()
         {
             return isInitialized && !crashed;
         }
@@ -103,7 +100,7 @@ namespace Aurora.Devices.ScriptedDevice
             throw new NotImplementedException();
         }
 
-        public void Reset()
+        public override void Reset()
         {
             if (isInitialized)
             {
@@ -120,7 +117,7 @@ namespace Aurora.Devices.ScriptedDevice
             }
         }
 
-        public void Shutdown()
+        public override void Shutdown()
         {
             if (isInitialized)
             {
@@ -139,13 +136,13 @@ namespace Aurora.Devices.ScriptedDevice
             }
         }
 
-        public bool UpdateDevice(Dictionary<DeviceKeys, Color> keyColors, DoWorkEventArgs e, bool forced = false)
+        public override bool UpdateDevice(Dictionary<DeviceKeys, Color> keyColors)
         {
             if (isInitialized)
             {
                 try
                 {
-                    return script.UpdateDevice(keyColors, forced);
+                    return script.UpdateDevice(keyColors);
                 }
                 catch (Exception exc)
                 {
@@ -164,24 +161,12 @@ namespace Aurora.Devices.ScriptedDevice
             }
         }
 
-        public bool UpdateDevice(DeviceColorComposition colorComposition, DoWorkEventArgs e, bool forced = false)
-        {
-            watch.Restart();
-
-            bool update_result = UpdateDevice(colorComposition.keyColors, e, forced);
-
-            watch.Stop();
-            lastUpdateTime = watch.ElapsedMilliseconds;
-
-            return update_result;
-        }
-
         public string GetDeviceUpdatePerformance()
         {
             return (isInitialized ? lastUpdateTime + " ms" : "");
         }
 
-        public VariableRegistry GetRegisteredVariables()
+        public override VariableRegistry GetRegisteredVariables()
         {
             if (script.GetType().GetMethod("GetRegisteredVariables") != null)
                 return script.GetRegisteredVariables();

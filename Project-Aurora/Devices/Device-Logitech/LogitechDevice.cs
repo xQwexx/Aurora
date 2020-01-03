@@ -41,7 +41,7 @@ namespace Device_Logitech
             LogitechGSDK.LogiLedShutdown();
         }
 
-        public override bool UpdateDevice(Dictionary<DeviceKeys, System.Drawing.Color> keyColors, DoWorkEventArgs e, bool forced = false)
+        public override bool UpdateDevice(Dictionary<DeviceKeys, System.Drawing.Color> keyColors)
         {
             foreach (var key in keyColors)
             {

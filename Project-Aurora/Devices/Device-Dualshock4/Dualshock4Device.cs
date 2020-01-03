@@ -113,7 +113,7 @@ namespace Device_Dualshock4
             }
         }
 
-        public override bool UpdateDevice(Dictionary<DeviceKeys, System.Drawing.Color> keyColors, DoWorkEventArgs e, bool forced = false)
+        public override bool UpdateDevice(Dictionary<DeviceKeys, System.Drawing.Color> keyColors)
         {
             if (keyColors.TryGetValue(key, out var clr))
             {

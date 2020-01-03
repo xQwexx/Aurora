@@ -39,7 +39,7 @@ namespace Device_CoolerMaster
             isInitialized = false;
         }
 
-        public override bool UpdateDevice(Dictionary<DK, Color> keyColors, DoWorkEventArgs e, bool forced = false)
+        public override bool UpdateDevice(Dictionary<DK, Color> keyColors)
         {
             foreach (var dev in InitializedDevices)
             {

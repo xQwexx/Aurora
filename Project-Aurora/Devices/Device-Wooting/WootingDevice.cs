@@ -49,7 +49,7 @@ namespace Device_Wooting
             }
         }
 
-        public override bool UpdateDevice(Dictionary<DeviceKeys, System.Drawing.Color> keyColors, DoWorkEventArgs e, bool forced = false)
+        public override bool UpdateDevice(Dictionary<DeviceKeys, System.Drawing.Color> keyColors)
         {
             try
             {
@@ -58,8 +58,6 @@ namespace Device_Wooting
 
                 foreach (KeyValuePair<DeviceKeys, Color> key in keyColors)
                 {
-                    if (e.Cancel) return false;
-
                     Color clr = CorrectAlpha(key.Value);
                     WootingKey.Keys devKey = DeviceKeyToWootingKey(key.Key);
                     if (devKey == WootingKey.Keys.None)
@@ -69,8 +67,6 @@ namespace Device_Wooting
                                               (byte)(clr.G * GlobalVarRegistry.GetVariable<int>($"{DeviceName}_scalar_g") / 100),
                                               (byte)(clr.B * GlobalVarRegistry.GetVariable<int>($"{DeviceName}_scalar_b") / 100));
                 }
-                if (e.Cancel)
-                    return false;
 
                 RGBControl.UpdateKeyboard();
                 return true;

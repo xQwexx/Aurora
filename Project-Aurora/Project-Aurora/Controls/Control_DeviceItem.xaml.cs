@@ -66,10 +66,10 @@ namespace Aurora.Controls
         {
             if(sender is Button)
             {
-                if(Device.Device.IsInitialized())
-                    Device.Device.Shutdown();
+                if(Device.Device.IsConnected())
+                    Device.Device.Disconnect();
                 else
-                    Device.Device.Initialize();
+                    Device.Device.Connect();
 
                 UpdateControls();
             }
@@ -78,11 +78,14 @@ namespace Aurora.Controls
         private void btnToggleEnableDisable_Click(object sender, RoutedEventArgs e)
         {
             if (Global.Configuration.devices_disabled.Contains(Device.Device.GetType()))
+            {
                 Global.Configuration.devices_disabled.Remove(Device.Device.GetType());
+                Device.Device.Connect();
+            }  
             else
             {
                 Global.Configuration.devices_disabled.Add(Device.Device.GetType());
-                Device.Device.Shutdown();
+                Device.Device.Disconnect();
             }
 
             UpdateControls();
@@ -95,15 +98,15 @@ namespace Aurora.Controls
 
         private void UpdateControls()
         {
-            if (Device.Device.IsInitialized())
+            if (Device.Device.IsConnected())
                 btnToggleOnOff.Content = "Stop";
             else
                 btnToggleOnOff.Content = "Start";
 
             txtblk_DeviceStatus.Text = Device.Device.GetDeviceDetails().TrimEnd(' ');
-            txtblk_DevicePerformance.Text = Device.Device.GetDeviceUpdatePerformance();
+            txtblk_DevicePerformance.Text = Device.GetDeviceUpdatePerformance();
 
-            if(Device is Devices.ScriptedDevice.ScriptedDevice)
+            if(Device.Device is Devices.ScriptedDevice.ScriptedDevice)
                 btnToggleEnableDisable.IsEnabled = false;
             else
             {

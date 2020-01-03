@@ -343,7 +343,7 @@ namespace Aurora
                     keyBitmap = background.GetBitmap()
                 };
 
-                Global.dev_manager.UpdateDevices(dcc);
+                UpdateDevices(dcc);
 
                 var hander = NewLayerRender;
                 if (hander != null)
@@ -371,7 +371,13 @@ namespace Aurora
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
         }
-
+        public void UpdateDevices(DeviceColorComposition composition)
+        {
+            foreach (DeviceContainer device in Global.dev_manager.DeviceContainers)
+            {
+                device.UpdateDevice(composition);
+            }
+        }
         public Dictionary<DeviceKeys, Color> GetKeyboardLights()
         {
             return Effects.keyColors;

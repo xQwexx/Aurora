@@ -20,7 +20,7 @@ namespace Device_Vulcan
 
         public override void Shutdown() => VulcanKeyboard.Disconnect();
 
-        public override bool UpdateDevice(Dictionary<DeviceKeys, System.Drawing.Color> keyColors, DoWorkEventArgs e, bool forced = false)
+        public override bool UpdateDevice(Dictionary<DeviceKeys, System.Drawing.Color> keyColors)
         {
             foreach (var key in keyColors)
             {

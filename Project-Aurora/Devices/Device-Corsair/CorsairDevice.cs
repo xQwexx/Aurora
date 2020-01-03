@@ -45,7 +45,7 @@ namespace Device_Corsair
             CUE.ReleaseControl();
         }
 
-        public override bool UpdateDevice(Dictionary<DeviceKeys, Color> keyColors, DoWorkEventArgs e, bool forced = false)
+        public override bool UpdateDevice(Dictionary<DeviceKeys, Color> keyColors)
         {
             for (int i = 0; i < deviceInfos.Count; i++)
                 SetDeviceColors(deviceInfos[i].Type, i, keyColors);

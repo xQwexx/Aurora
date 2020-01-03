@@ -1406,19 +1406,81 @@ namespace Aurora.Devices
         /// <returns></returns>
         bool UpdateDevice(DeviceColorComposition colorComposition, DoWorkEventArgs e, bool forced = false);
     }
+    public enum AuroraDeviceType
+    {
+        Keyboard,
+        Mouse,
+        Headset
+    }
+    /// <summary>
+    /// An interface for a device class.
+    /// </summary>
+    public interface IAuroraDevice
+    {
+        /// <summary>
+        /// Gets registered variables by this device.
+        /// </summary>
+        /// <returns>Registered Variables</returns>
+        VariableRegistry GetRegisteredVariables();
 
+        /// <summary>
+        /// Gets the device name.
+        /// </summary>
+        /// <returns>Device name</returns>
+        string GetDeviceName();
+
+        /// <summary>
+        /// Gets the device Type.
+        /// </summary>
+        /// <returns>Device type</returns>
+        AuroraDeviceType GetDeviceType();
+
+        /// <summary>
+        /// Gets specific details about the device instance.
+        /// </summary>
+        /// <returns>Details about the device instance</returns>
+        string GetDeviceDetails();
+
+
+        /// <summary>
+        /// Attempts to connect the device.
+        /// </summary>
+        /// <returns>A boolean value representing the success of this call</returns>
+        bool Connect();
+
+        /// <summary>
+        /// Disconnect the device.
+        /// </summary>
+        /// <returns></returns>
+        void Disconnect();
+        /// <summary>
+        /// Gets the connection status of this device instance. [NOT IMPLEMENTED]
+        /// </summary>
+        /// <returns>A boolean value representing the connection status of this device</returns>
+        bool IsConnected();
+
+
+        /// <summary>
+        /// Updates the device with a specified color composition.
+        /// </summary>
+        /// <param name="colorComposition">A struct containing a dictionary of colors as well as the resulting bitmap</param>
+        /// <returns></returns>
+        bool UpdateDevice(DeviceColorComposition colorComposition);
+
+        /*/// <summary>
+        /// Gets specific details about the device instance.
+        /// </summary>
+        /// <returns>Details about the device instance</returns>
+        string GetDeviceId();*/
+    }
     /// <summary>
     /// Default Device implementation
     /// </summary>
-    public abstract class Device : IDevice
+    public abstract class Device : IAuroraDevice, IDeviceConnector
     {
         protected abstract string DeviceName { get; }
 
         protected virtual bool isInitialized { get; set; }
-
-        private readonly Stopwatch watch = new Stopwatch();
-
-        private long lastUpdateTime = 0;
 
         private VariableRegistry variableRegistry;
 
@@ -1426,7 +1488,7 @@ namespace Aurora.Devices
 
         protected void LogError(string s) => Global.logger.Error(s);
 
-        protected Color CorrectAlpha(Color clr) => Color.FromArgb(255, Utils.ColorUtils.MultiplyColorByScalar(clr, clr.A / 255.0D));
+        protected Color CorrectAlpha(Color clr) => Utils.ColorUtils.CorrectWithAlpha(clr);
 
         protected VariableRegistry GlobalVarRegistry => Global.Configuration.VarRegistry;
 
@@ -1438,11 +1500,6 @@ namespace Aurora.Devices
         public virtual string GetDeviceName()
         {
             return DeviceName;
-        }
-
-        public virtual string GetDeviceUpdatePerformance()
-        {
-            return isInitialized ? lastUpdateTime + " ms" : "";
         }
 
         public virtual VariableRegistry GetRegisteredVariables()
@@ -1460,34 +1517,13 @@ namespace Aurora.Devices
             return isInitialized;
         }
 
-        public virtual bool UpdateDevice(DeviceColorComposition colorComposition, DoWorkEventArgs e, bool forced = false)
-        {
-            watch.Restart();
-
-            bool update_result = UpdateDevice(colorComposition.keyColors, e, forced);
-
-            watch.Stop();
-            lastUpdateTime = watch.ElapsedMilliseconds;
-
-            return update_result;
-        }
-
         public virtual bool IsConnected()
         {
             return isInitialized;
         }
 
-        public virtual bool IsKeyboardConnected()
-        {
-            return isInitialized;
-        }
 
-        public virtual bool IsPeripheralConnected()
-        {
-            return isInitialized;
-        }
-
-        public virtual bool Reconnect()
+        public virtual bool Connect()
         {
             return isInitialized;
         }
@@ -1519,6 +1555,26 @@ namespace Aurora.Devices
         /// <summary>
         /// Is called every frame (30fps). Update the device here
         /// </summary>
-        public abstract bool UpdateDevice(Dictionary<DeviceKeys, Color> keyColors, DoWorkEventArgs e, bool forced = false);
+        public abstract bool UpdateDevice(Dictionary<DeviceKeys, Color> keyColors);
+
+        public virtual List<IAuroraDevice> GetDevices()
+        {
+            return new List<IAuroraDevice>() { this };
+        }
+
+        public bool UpdateDevice(DeviceColorComposition colorComposition)
+        {
+            return UpdateDevice(colorComposition.keyColors);
+        }
+
+        public virtual void Disconnect()
+        {
+            
+        }
+
+        public virtual AuroraDeviceType GetDeviceType()
+        {
+            return AuroraDeviceType.Keyboard;
+        }
     }
 }

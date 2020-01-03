@@ -21,7 +21,7 @@ namespace Device_Drevo
             return;
         }
 
-        public override bool UpdateDevice(Dictionary<DeviceKeys, System.Drawing.Color> keyColors, DoWorkEventArgs e, bool forced = false)
+        public override bool UpdateDevice(Dictionary<DeviceKeys, System.Drawing.Color> keyColors)
         {
             if (!isInitialized)
                 return false;
@@ -36,8 +36,6 @@ namespace Device_Drevo
                 int index = 0;
                 foreach (var key in keyColors)
                 {
-                    if (e.Cancel) return false;
-
                     index = DrevoRadiSDK.ToDrevoBitmap((int)key.Key);
                     if (index != -1)
                     {
