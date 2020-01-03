@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,6 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CorsairRGB.NET">
@@ -74,8 +76,6 @@
   </Target>
   <Import Project="..\..\packages\ILMerge.MSBuild.Task.1.0.7\build\ILMerge.MSBuild.Task.targets" Condition="Exists('..\..\packages\ILMerge.MSBuild.Task.1.0.7\build\ILMerge.MSBuild.Task.targets')" />
   <PropertyGroup>
-    <PostBuildEvent>RD /S /Q "$(TargetDir)ILMerge\"
-del /F "$(TargetDir)HidSharp.xml"
-del /F "$(TargetDir)Vulcan.NET.xml"</PostBuildEvent>
+    <PostBuildEvent>RD /S /Q "$(TargetDir)ILMerge\"</PostBuildEvent>
   </PropertyGroup>
 </Project>
