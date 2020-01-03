@@ -102,7 +102,7 @@ namespace Device_Dualshock4
                 details += $": {Devices.Count} Device{(Devices.Count == 1 ? "" : "s")} Connected: ";
 
                 foreach (var dev in Devices)
-                    details += (Devices.IndexOf(dev) + 1) + dev.GetDeviceDetails();
+                    details += " #" + (Devices.IndexOf(dev) + 1) + dev.GetDeviceDetails();
             }
             else
             {
@@ -136,6 +136,7 @@ namespace Device_Dualshock4
                 dev.Disconnect(GlobalVarRegistry.GetVariable<bool>($"{DeviceName}_disconnect_when_stop"));
 
             DS4Devices.stopControllers();
+            Devices.Clear();
             isInitialized = false;
         }
 
