@@ -355,13 +355,17 @@
     <Compile Include="Controls\Control_AnimationTrackPresenter.xaml.cs">
       <DependentUpon>Control_AnimationTrackPresenter.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Control_DeviceConnectorItem.xaml.cs">
+      <DependentUpon>Control_DeviceConnectorItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Control_DeviceItem.xaml.cs">
       <DependentUpon>Control_DeviceItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Control_FieldPresenter.xaml.cs">
       <DependentUpon>Control_FieldPresenter.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Devices\IDeviceConnector.cs" />
+    <Compile Include="Devices\AuroraDevice.cs" />
+    <Compile Include="Devices\AuroraDeviceConnector.cs" />
     <Compile Include="Devices\UnifiedHID\RoccatTyon.cs" />
     <Compile Include="Profiles\RocketLeague\GSI\Nodes\Team.cs" />
     <Compile Include="Profiles\RocketLeague\Layers\RocketLeagueGoalExplosionLayerHandler.cs" />
@@ -1639,6 +1643,10 @@
     <Page Include="Controls\Control_AnimationTrackPresenter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Control_DeviceConnectorItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Control_DeviceItem.xaml">
       <SubType>Designer</SubType>

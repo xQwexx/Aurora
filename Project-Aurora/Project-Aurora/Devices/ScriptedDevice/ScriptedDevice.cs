@@ -9,20 +9,18 @@ using Microsoft.Win32.TaskScheduler;
 
 namespace Aurora.Devices.ScriptedDevice
 {
-    public class ScriptedDevice : Aurora.Devices.Device
+    public class ScriptedDeviceConnector : Aurora.Devices.AuroraDeviceConnector
     {
         private bool crashed = false;
         private readonly dynamic script = null;
 
-        private string devicename = "";
-        private bool isInitialized = false;
-
         private System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
         private long lastUpdateTime = 0;
+        private string devicename;
 
-        protected override string DeviceName => devicename;
+        protected override string ConnectorName => "Script";
 
-        public ScriptedDevice(dynamic script)
+        public ScriptedDeviceConnector(dynamic script)
         {
             if (
                 (script != null) &&
@@ -43,56 +41,27 @@ namespace Aurora.Devices.ScriptedDevice
             }
         }
 
-        public override string GetDeviceDetails()
+        private string GetDeviceDetails()
         {
             if (crashed)
-                return devicename + ": Error!";
+                return " Error!";
 
-            if (isInitialized)
-                return devicename + ": Connected";
-            else
-                return devicename + ": Not initialized";
+            return " Connected";
         }
 
-        public override bool Initialize()
+        protected override bool InitializeImpl()
         {
-            if (!isInitialized)
+            try
             {
-                try
-                {
-                    isInitialized = script.Initialize();
-                }
-                catch (Exception exc)
-                {
-                    Global.logger.Error("Device script for {0} encountered an error during Initialization. Exception: {1}", devicename, exc);
-                    crashed = true;
-                    isInitialized = false;
-
-                    return false;
-                }
+                return script.Initialize();
             }
+            catch (Exception exc)
+            {
+                Global.logger.Error("Device script for {0} encountered an error during Initialization. Exception: {1}", devicename, exc);
+                crashed = true;
 
-            return isInitialized && !crashed;
-        }
-
-        public override bool IsConnected()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool IsInitialized()
-        {
-            return isInitialized && !crashed;
-        }
-
-        public bool IsKeyboardConnected()
-        {
-            return isInitialized && !crashed;
-        }
-
-        public bool IsPeripheralConnected()
-        {
-            return isInitialized && !crashed;
+                return false;
+            }
         }
 
         public bool Reconnect()
@@ -102,68 +71,29 @@ namespace Aurora.Devices.ScriptedDevice
 
         public override void Reset()
         {
-            if (isInitialized)
+            try
             {
-                try
-                {
-                    script.Reset();
-                }
-                catch (Exception exc)
-                {
-                    Global.logger.Error("Device script for {0} encountered an error during Reset. Exception: {1}", devicename, exc);
-                    crashed = true;
-                    isInitialized = false;
-                }
+                script.Reset();
+            }
+            catch (Exception exc)
+            {
+                Global.logger.Error("Device script for {0} encountered an error during Reset. Exception: {1}", devicename, exc);
+                crashed = true;
             }
         }
 
-        public override void Shutdown()
+        protected override void ShutdownImpl()
         {
-            if (isInitialized)
+            try
             {
-                try
-                {
-                    this.Reset();
-                    script.Shutdown();
-                    isInitialized = false;
-                }
-                catch (Exception exc)
-                {
-                    Global.logger.Error("Device script for {0} encountered an error during Shutdown. Exception: {1}", devicename, exc);
-                    crashed = true;
-                    isInitialized = false;
-                }
+                this.Reset();
+                script.Shutdown();
             }
-        }
-
-        public override bool UpdateDevice(Dictionary<DeviceKeys, Color> keyColors)
-        {
-            if (isInitialized)
+            catch (Exception exc)
             {
-                try
-                {
-                    return script.UpdateDevice(keyColors);
-                }
-                catch (Exception exc)
-                {
-                    Global.logger.Error(
-                        "Device script for {0} encountered an error during UpdateDevice. Exception: {1}",
-                        devicename, exc);
-                    crashed = true;
-                    isInitialized = false;
-
-                    return false;
-                }
+                Global.logger.Error("Device script for {0} encountered an error during Shutdown. Exception: {1}", devicename, exc);
+                crashed = true;
             }
-            else
-            {
-                return false;
-            }
-        }
-
-        public string GetDeviceUpdatePerformance()
-        {
-            return (isInitialized ? lastUpdateTime + " ms" : "");
         }
 
         public override VariableRegistry GetRegisteredVariables()
@@ -172,6 +102,40 @@ namespace Aurora.Devices.ScriptedDevice
                 return script.GetRegisteredVariables();
             else
                 return new VariableRegistry();
+        }
+
+        protected override List<AuroraDevice> GetDevices()
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class ScriptedDevice : Aurora.Devices.AuroraDevice
+    {
+        private bool crashed = false;
+        private readonly dynamic script = null;
+        protected override string DeviceName => script.devicename;
+        public ScriptedDevice(dynamic script)
+        {
+                this.script = script;
+        }
+
+        protected override AuroraDeviceType AuroraDeviceType => throw new NotImplementedException();
+
+        protected override bool UpdateDeviceImpl(DeviceColorComposition composition)
+        {
+            try
+            {
+                return script.UpdateDevice(composition.keyColors);
+            }
+            catch (Exception exc)
+            {
+                Global.logger.Error(
+                    "Device script for {0} encountered an error during UpdateDevice. Exception: {1}",
+                    DeviceName, exc);
+                crashed = true;
+
+                return false;
+            }
         }
     }
 }

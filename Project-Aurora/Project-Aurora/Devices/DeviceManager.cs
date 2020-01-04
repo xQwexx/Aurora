@@ -14,118 +14,13 @@ using System.Threading.Tasks;
 
 namespace Aurora.Devices
 {
-    public class DeviceContainer
-    {
-        public IAuroraDevice Device { get; set; }
-        private readonly Stopwatch Watch = new Stopwatch();
-        private long LastUpdateTime = 0;
-        private bool UpdateIsOngoing = false;
-        public async void UpdateDevice(DeviceColorComposition composition)
-        {
-            if (Device.IsConnected())
-            {
-                if (Global.Configuration.devices_disabled.Contains(Device.GetType()))
-                {
-                    //Initialized when it's supposed to be disabled? SMACK IT!
-                    Device.Disconnect();
-                    return;
-                }
-
-                if (!UpdateIsOngoing)
-                {
-                    UpdateIsOngoing = true;
-                    Watch.Restart();
-
-                    await Task.Run(() => Device.UpdateDevice(composition));
-
-                    Watch.Stop();
-                    LastUpdateTime = Watch.ElapsedMilliseconds;
-
-                    UpdateIsOngoing = false;
-                }
-    
-            }
-        }
-        public virtual string GetDeviceUpdatePerformance()
-        {
-            return Device.IsConnected() ? LastUpdateTime + " ms" : "";
-        }
-        public DeviceContainer(IAuroraDevice device)
-        {
-            Device = device;
-            Connect();
-        }
-        public bool Connect()
-        {
-            if (Device.GetDeviceType() == AuroraDeviceType.Keyboard && Global.Configuration.devices_disable_keyboard ||
-                Device.GetDeviceType() == AuroraDeviceType.Mouse && Global.Configuration.devices_disable_mouse ||
-                Device.GetDeviceType() == AuroraDeviceType.Headset && Global.Configuration.devices_disable_headset)
-            {
-                Device.Disconnect();
-                return false;
-            }
-            else
-            {
-                return Device.Connect();
-            }
-        }
- 
-    }
-    public class AuroraDeviceConnector
-    {
-        public IDeviceConnector DeviceConnector;
-        public List<DeviceContainer> DeviceContainers { get; } = new List<DeviceContainer>();
-
-        private event EventHandler NewSuccessfulInitiation;
-        public AuroraDeviceConnector(IDeviceConnector deviceConnector, EventHandler newInitiation)
-        {
-            DeviceConnector = deviceConnector;
-            
-            NewSuccessfulInitiation += newInitiation;
-        }
-        public bool IsInitialized() => DeviceConnector.IsInitialized();
-
-        public async void Initialize(bool forceRetry = false)
-        {
-            if (IsInitialized() || Global.Configuration.devices_disabled.Contains(DeviceConnector.GetType()))
-                return;
-
-            if (await Task.Run(() => DeviceConnector.Initialize()))
-            {
-                foreach (var device in DeviceConnector.GetDevices())
-                {
-                    DeviceContainers.Add(new DeviceContainer(device));
-                }
-                NewSuccessfulInitiation?.Invoke(this, new EventArgs());
-            }
-            Global.logger.Info("Device, " + DeviceConnector.GetDeviceName() + ", was" + (DeviceConnector.IsInitialized() ? "" : " not") + " initialized");
-        }
-
-        public void Reset()
-        {
-            if (IsInitialized())
-            {
-                DeviceConnector.Reset();
-            }
-        }
-        public void Shutdown()
-        {
-            if (IsInitialized())
-            {
-                DeviceContainers.Clear();
-                DeviceConnector.Shutdown();
-                Global.logger.Info("Device, " + DeviceConnector.GetDeviceName() + ", was shutdown");
-            }
-        }
-    }
     public class DeviceManager : IDisposable
     {
-        public List<AuroraDeviceConnector> DeviceSdkContainers { get; } = new List<AuroraDeviceConnector>();
-        public IEnumerable<DeviceContainer> DeviceContainers => DeviceSdkContainers.SelectMany(d => d.DeviceContainers);
-        public IEnumerable<DeviceContainer> NotInitializedDeviceContainers => DeviceSdkContainers.Where(d => !d.IsInitialized()).SelectMany(dc => dc.DeviceConnector.GetDevices()).Select(d => new DeviceContainer(d)).ToList();
-        public IEnumerable<IAuroraDevice> Devices => DeviceContainers.Select(d => d.Device);
-        public IEnumerable<DeviceContainer> InitializedDeviceContainers => DeviceContainers.Where(dc => dc.Device.IsConnected());
-        public IEnumerable<IAuroraDevice> InitializedDevices => Devices.Where(d => d.IsConnected());
+        public List<AuroraDeviceConnector> DeviceContainers { get; } = new List<AuroraDeviceConnector>();
+        public IEnumerable<AuroraDevice> Devices => DeviceContainers.SelectMany(d => d.Devices);
+        public IEnumerable<AuroraDevice> NotInitializedDevices => DeviceContainers.Where(d => !d.IsInitialized()).SelectMany(dc => dc.Devices);
+        /*public IEnumerable<DeviceContainer> InitializedDeviceContainers => AuroraDevices.Where(dc => dc.Device.IsConnected());
+        public IEnumerable<IAuroraDevice> InitializedDevices => Devices.Where(d => d.IsConnected());*/
 
 
         private const int retryInterval = 10000;
@@ -145,17 +40,6 @@ namespace Aurora.Devices
 
         public DeviceManager()
         {
-            //DeviceContainers.Add(new DeviceContainer(new Razer.RazerDevice()));
-            //DeviceContainers.Add(new DeviceContainer(new Roccat.RoccatDevice()));
-            //DeviceContainers.Add(new DeviceContainer(new Clevo.ClevoDevice()));
-            //DeviceContainers.Add(new DeviceContainer(new AtmoOrbDevice.AtmoOrbDevice()));
-            //DeviceContainers.Add(new DeviceContainer(new SteelSeries.SteelSeriesDevice()));
-            //DeviceContainers.Add(new DeviceContainer(new UnifiedHID.UnifiedHIDDevice()));
-            //DeviceContainers.Add(new DeviceContainer(new Creative.SoundBlasterXDevice()));
-            //DeviceContainers.Add(new DeviceContainer(new LightFX.LightFxDevice()));
-            //DeviceContainers.Add(new DeviceContainer(new YeeLight.YeeLightDevice()));
-            //DeviceContainers.Add(new DeviceContainer(new Asus.AsusDevice()));
-            //DeviceContainers.Add(new DeviceContainer(new NZXT.NZXTDevice()));
 
             string devices_scripts_path = System.IO.Path.Combine(Global.ExecutingDirectory, "Scripts", "Devices");
 
@@ -175,9 +59,9 @@ namespace Aurora.Devices
                                 {
                                     dynamic script = Global.PythonEngine.Operations.CreateInstance(main_type);
 
-                                    IDeviceConnector scripted_device = new Devices.ScriptedDevice.ScriptedDevice(script);
-
-                                    DeviceSdkContainers.Add(new AuroraDeviceConnector(scripted_device, NewDevicesInitialized));
+                                    AuroraDeviceConnector scripted_device = new Devices.ScriptedDevice.ScriptedDeviceConnector(script);
+                                    scripted_device.NewSuccessfulInitiation += NewDevicesInitialized;
+                                    DeviceContainers.Add(scripted_device);
                                 }
                                 else
                                     Global.logger.Error("Script \"{0}\" does not contain a public 'main' class", device_script);
@@ -189,9 +73,9 @@ namespace Aurora.Devices
                                 {
                                     dynamic script = Activator.CreateInstance(typ);
 
-                                    IDeviceConnector scripted_device = new Devices.ScriptedDevice.ScriptedDevice(script);
-
-                                    DeviceSdkContainers.Add(new AuroraDeviceConnector(scripted_device, NewDevicesInitialized));
+                                    AuroraDeviceConnector scripted_device = new Devices.ScriptedDevice.ScriptedDeviceConnector(script);
+                                    scripted_device.NewSuccessfulInitiation += NewDevicesInitialized;
+                                    DeviceContainers.Add(scripted_device);
                                 }
 
                                 break;
@@ -220,11 +104,11 @@ namespace Aurora.Devices
 
                         foreach (var type in deviceAssembly.GetExportedTypes())
                         {
-                            if (typeof(IDeviceConnector).IsAssignableFrom(type))
+                            if (typeof(AuroraDeviceConnector).IsAssignableFrom(type))
                             {
-                                IDeviceConnector devDll = (IDeviceConnector)Activator.CreateInstance(type);
-
-                                DeviceSdkContainers.Add(new AuroraDeviceConnector(devDll, NewDevicesInitialized));
+                                AuroraDeviceConnector devDll = (AuroraDeviceConnector)Activator.CreateInstance(type);
+                                devDll.NewSuccessfulInitiation += NewDevicesInitialized;
+                                DeviceContainers.Add(devDll);
                             }
                         }
                     }
@@ -274,8 +158,8 @@ namespace Aurora.Devices
         public void RegisterVariables()
         {
             //Register any variables
-            foreach (var device in DeviceContainers)
-                Global.Configuration.VarRegistry.Combine(device.Device.GetRegisteredVariables());
+            foreach (var device in Devices)
+                Global.Configuration.VarRegistry.Combine(device.GetRegisteredVariables());
         }
 
         public void Initialize(bool forceRetry = false)
@@ -283,10 +167,10 @@ namespace Aurora.Devices
             if (suspended)
                 return;
 
-            DeviceSdkContainers.ForEach(ds => ds.Initialize(forceRetry));
+            DeviceContainers.ForEach(ds => ds.Initialize());
 
 
-            if (DeviceSdkContainers.Where(dc => !dc.IsInitialized()).Any() && (retryThread == null || forceRetry || retryThread?.ThreadState == System.Threading.ThreadState.Stopped))
+            if (DeviceContainers.Where(dc => !dc.IsInitialized()).Any() && (retryThread == null || forceRetry || retryThread?.ThreadState == System.Threading.ThreadState.Stopped))
             {
                 if (forceRetry)
                     retryThread?.Abort();
@@ -305,11 +189,11 @@ namespace Aurora.Devices
 
                 Global.logger.Info("Retrying Device Initialization");
 
-                DeviceSdkContainers.ForEach(ds => ds.Initialize());
+                DeviceContainers.ForEach(ds => ds.Initialize());
                 retryAttemptsLeft--;
 
                 //We don't need to continue the loop if we aren't trying to initialize anything
-                if (DeviceSdkContainers.Where(dc => !dc.IsInitialized()).Any())
+                if (DeviceContainers.Where(dc => !dc.IsInitialized()).Any())
                     break;
 
                 Thread.Sleep(retryInterval);
@@ -322,18 +206,18 @@ namespace Aurora.Devices
                 Initialize();
         }
 
-        public bool AnyInitialized() => DeviceSdkContainers.Where(d => d.IsInitialized()).Any();
+        public bool AnyInitialized() => DeviceContainers.Where(d => d.IsInitialized()).Any();
 
-        public void Shutdown() => DeviceSdkContainers.ForEach(d => d.Shutdown());
+        public void Shutdown() => DeviceContainers.ForEach(d => d.Shutdown());
 
-        public void ResetDevices() => DeviceSdkContainers.ForEach(d => d.Reset());
+        public void ResetDevices() => DeviceContainers.ForEach(d => d.Reset());
 
         public string GetDevices()
         {
             string devices_info = "";
 
-            foreach (DeviceContainer device in DeviceContainers)
-                devices_info += device.Device.GetDeviceDetails() + "\r\n";
+            foreach (var device in Devices)
+                devices_info += device.GetDeviceDetails() + "\r\n";
 
             if (retryAttemptsLeft > 0)
                 devices_info += "Retries: " + retryAttemptsLeft + "\r\n";

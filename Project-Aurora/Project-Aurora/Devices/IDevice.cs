@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -134,7 +135,7 @@ namespace Aurora.Devices
         /// </summary>
         [Description("Tilde")]
         TILDE = 17,
-        
+
         /// <summary>
         /// One key
         /// </summary>
@@ -1176,7 +1177,7 @@ namespace Aurora.Devices
         /// </summary>
         [Description("Additional Light 27")]
         ADDITIONALLIGHT27 = 188,
-        
+
         /// <summary>
         /// Additional Light 28
         /// </summary>
@@ -1410,7 +1411,10 @@ namespace Aurora.Devices
     {
         Keyboard,
         Mouse,
-        Headset
+        Headset,
+        MouseMat,
+        HeadsetStand,
+        Unkown
     }
     /// <summary>
     /// An interface for a device class.
@@ -1473,108 +1477,6 @@ namespace Aurora.Devices
         /// <returns>Details about the device instance</returns>
         string GetDeviceId();*/
     }
-    /// <summary>
-    /// Default Device implementation
-    /// </summary>
-    public abstract class Device : IAuroraDevice, IDeviceConnector
-    {
-        protected abstract string DeviceName { get; }
-
-        protected virtual bool isInitialized { get; set; }
-
-        private VariableRegistry variableRegistry;
-
-        protected void LogInfo(string s) => Global.logger.Info(s);
-
-        protected void LogError(string s) => Global.logger.Error(s);
-
-        protected Color CorrectAlpha(Color clr) => Utils.ColorUtils.CorrectWithAlpha(clr);
-
-        protected VariableRegistry GlobalVarRegistry => Global.Configuration.VarRegistry;
-
-        public virtual string GetDeviceDetails()
-        {
-            return DeviceName + ": " + (isInitialized ? "Initialized" : "Not initialized");
-        }
-
-        public virtual string GetDeviceName()
-        {
-            return DeviceName;
-        }
-
-        public virtual VariableRegistry GetRegisteredVariables()
-        {
-            if(variableRegistry == null)
-            {
-                variableRegistry = new VariableRegistry();
-                RegisterVariables(variableRegistry);
-            }
-            return variableRegistry;
-        }
-
-        public virtual bool IsInitialized()
-        {
-            return isInitialized;
-        }
-
-        public virtual bool IsConnected()
-        {
-            return isInitialized;
-        }
-
-
-        public virtual bool Connect()
-        {
-            return isInitialized;
-        }
-
-        public virtual void Reset()
-        {
-            Shutdown();
-            Initialize();
-        }
-
-        /// <summary>
-        /// Only called once when registering variables. Can be empty if not needed
-        /// </summary>
-        protected virtual void RegisterVariables(VariableRegistry local)
-        {
-            //purposefully empty, if varibles are needed, this should be overridden
-        }
-
-        /// <summary>
-        /// Is called first. Initialize the device here
-        /// </summary>
-        public abstract bool Initialize();
-
-        /// <summary>
-        /// Is called last. Dispose of the devices here
-        /// </summary>
-        public abstract void Shutdown();
-
-        /// <summary>
-        /// Is called every frame (30fps). Update the device here
-        /// </summary>
-        public abstract bool UpdateDevice(Dictionary<DeviceKeys, Color> keyColors);
-
-        public virtual List<IAuroraDevice> GetDevices()
-        {
-            return new List<IAuroraDevice>() { this };
-        }
-
-        public bool UpdateDevice(DeviceColorComposition colorComposition)
-        {
-            return UpdateDevice(colorComposition.keyColors);
-        }
-
-        public virtual void Disconnect()
-        {
-            
-        }
-
-        public virtual AuroraDeviceType GetDeviceType()
-        {
-            return AuroraDeviceType.Keyboard;
-        }
-    }
 }
+
+   

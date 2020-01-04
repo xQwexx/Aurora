@@ -11,52 +11,49 @@ using Wooting;
 
 namespace Device_Wooting
 {
-    public class WootingDevice : Aurora.Devices.Device
+    public class WootingDeviceConnector : AuroraDeviceConnector
     {
-        protected override string DeviceName => "Wooting";
+        protected override string ConnectorName => "Wooting";
 
-        public override bool Initialize()
+        protected override List<AuroraDevice> GetDevices()
         {
-            if (!isInitialized)
-            {
-                try
-                {
-                    if (RGBControl.IsConnected())
-                    {
-                        isInitialized = true;
-                    }
-                }
-                catch (Exception exc)
-                {
-                    LogError("There was an error initializing Wooting SDK.\r\n" + exc.Message);
-
-                    return false;
-                }
-            }
-
-            if (!isInitialized)
-                LogInfo("No Wooting devices successfully Initialized!");
-
-            return isInitialized;
+            return new List<AuroraDevice>() { new WootingDevice() };
         }
 
-        public override void Shutdown()
-        {
-            if (isInitialized)
-            {
-                RGBControl.Reset();
-                isInitialized = false;
-            }
-        }
-
-        public override bool UpdateDevice(Dictionary<DeviceKeys, System.Drawing.Color> keyColors)
+        protected override bool InitializeImpl()
         {
             try
             {
-                if (!this.isInitialized)
-                    return false;
+                if (RGBControl.IsConnected())
+                {
+                    return true;
+                }
+            }
+            catch (Exception exc)
+            {
+                LogError("There was an error initializing Wooting SDK.\r\n" + exc.Message);
 
-                foreach (KeyValuePair<DeviceKeys, Color> key in keyColors)
+                return false;
+            }
+
+            return false;
+        }
+
+        protected override void ShutdownImpl()
+        {
+            RGBControl.Reset();
+        }
+
+        
+    }
+    public class WootingDevice : AuroraDevice
+    {
+        protected override bool UpdateDeviceImpl(DeviceColorComposition composition)
+        {
+            try
+            {
+
+                foreach (KeyValuePair<DeviceKeys, Color> key in composition.keyColors)
                 {
                     Color clr = CorrectAlpha(key.Value);
                     WootingKey.Keys devKey = DeviceKeyToWootingKey(key.Key);
@@ -219,6 +216,10 @@ namespace Device_Wooting
             { DeviceKeys.NUM_PERIOD, WootingKey.Keys.NumPeriod },
         };
 
+        protected override string DeviceName => "Wooting";
+
+        protected override AuroraDeviceType AuroraDeviceType => AuroraDeviceType.Keyboard;
+
         public static WootingKey.Keys DeviceKeyToWootingKey(DeviceKeys key)
         {
             if (KeyMap.TryGetValue(key, out WootingKey.Keys w_key))
@@ -226,5 +227,6 @@ namespace Device_Wooting
 
             return WootingKey.Keys.None;
         }
+
     }
 }

@@ -373,7 +373,7 @@ namespace Aurora
         }
         public void UpdateDevices(DeviceColorComposition composition)
         {
-            foreach (DeviceContainer device in Global.dev_manager.DeviceContainers)
+            foreach (var device in Global.dev_manager.Devices)
             {
                 device.UpdateDevice(composition);
             }

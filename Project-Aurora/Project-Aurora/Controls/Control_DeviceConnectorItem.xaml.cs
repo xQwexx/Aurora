@@ -22,16 +22,16 @@ namespace Aurora.Controls
     /// <summary>
     /// Interaction logic for Control_DeviceItem.xaml
     /// </summary>
-    public partial class Control_DeviceItem : UserControl
+    public partial class Control_DeviceConnectorItem : UserControl
     {
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public static readonly DependencyProperty DeviceProperty = DependencyProperty.Register("Device", typeof(AuroraDevice), typeof(Control_DeviceItem));
+        public static readonly DependencyProperty DeviceProperty = DependencyProperty.Register("DeviceConnector", typeof(AuroraDeviceConnector), typeof(Control_DeviceConnectorItem));
 
-        public AuroraDevice Device
+        public AuroraDeviceConnector DeviceConnector
         {
             get
             {
-                return (AuroraDevice)GetValue(DeviceProperty);
+                return (AuroraDeviceConnector)GetValue(DeviceProperty);
             }
             set
             {
@@ -41,7 +41,7 @@ namespace Aurora.Controls
             }
         }
 
-        public Control_DeviceItem()
+        public Control_DeviceConnectorItem()
         {
             InitializeComponent();
 
@@ -66,10 +66,10 @@ namespace Aurora.Controls
         {
             if(sender is Button)
             {
-                if(Device.IsConnected())
-                    Device.Disconnect();
+                if(DeviceConnector.IsInitialized())
+                    DeviceConnector.Shutdown();
                 else
-                    Device.Connect();
+                    DeviceConnector.Initialize();
 
                 UpdateControls();
             }
@@ -77,15 +77,15 @@ namespace Aurora.Controls
 
         private void btnToggleEnableDisable_Click(object sender, RoutedEventArgs e)
         {
-            if (Global.Configuration.devices_disabled.Contains(Device.GetType()))
+            if (Global.Configuration.devices_disabled.Contains(DeviceConnector.GetType()))
             {
-                Global.Configuration.devices_disabled.Remove(Device.GetType());
-                Device.Connect();
+                Global.Configuration.devices_disabled.Remove(DeviceConnector.GetType());
+                //DeviceConnector.Initialize();
             }  
             else
             {
-                Global.Configuration.devices_disabled.Add(Device.GetType());
-                Device.Disconnect();
+                Global.Configuration.devices_disabled.Add(DeviceConnector.GetType());
+                DeviceConnector.Shutdown();
             }
 
             UpdateControls();
@@ -98,19 +98,19 @@ namespace Aurora.Controls
 
         private void UpdateControls()
         {
-            if (Device.IsConnected())
+            if (DeviceConnector.IsInitialized())
                 btnToggleOnOff.Content = "Stop";
             else
                 btnToggleOnOff.Content = "Start";
 
-            txtblk_DeviceStatus.Text = Device.GetDeviceDetails().TrimEnd(' ');
-            txtblk_DevicePerformance.Text = Device.GetDeviceUpdatePerformance();
+            txtblk_DeviceStatus.Text = DeviceConnector.GetConnectorDetails().TrimEnd(' ');
+            txtblk_DevicePerformance.Text = "";
 
-            if(Device is Devices.ScriptedDevice.ScriptedDevice)
+            if(DeviceConnector is Devices.ScriptedDevice.ScriptedDeviceConnector)
                 btnToggleEnableDisable.IsEnabled = false;
             else
             {
-                if (Global.Configuration.devices_disabled.Contains(Device.GetType()))
+                if (Global.Configuration.devices_disabled.Contains(DeviceConnector.GetType()))
                 {
                     btnToggleEnableDisable.Content = "Enable";
                     btnToggleOnOff.IsEnabled = false;
@@ -122,16 +122,20 @@ namespace Aurora.Controls
                 }
             }
 
-            if(Device.GetRegisteredVariables().GetRegisteredVariableKeys().Count() == 0)
+            if(DeviceConnector.GetRegisteredVariables().GetRegisteredVariableKeys().Count() == 0)
                 btnViewOptions.IsEnabled = false;
+            this.lstDevices.ItemsSource = DeviceConnector.Devices.OrderBy(dc => dc.GetDeviceName());
+
+
+            this.lstDevices.Items.Refresh();
         }
 
         private void btnViewOptions_Click(object sender, RoutedEventArgs e)
         {
             Window_VariableRegistryEditor options_window = new Window_VariableRegistryEditor();
-            options_window.Title = $"{Device.GetDeviceName()} - Options";
+            options_window.Title = $"{DeviceConnector.GetConnectorName()} - Options";
             options_window.SizeToContent = SizeToContent.WidthAndHeight;
-            options_window.VarRegistryEditor.RegisteredVariables = Device.GetRegisteredVariables();
+            options_window.VarRegistryEditor.RegisteredVariables = DeviceConnector.GetRegisteredVariables();
             options_window.Closing += (_sender, _eventArgs) =>
             {
                 ConfigManager.Save(Global.Configuration);

@@ -10,7 +10,7 @@ using Color = System.Drawing.Color;
 
 namespace Aurora.Devices.RGBNet
 {
-    public abstract class AbstractRGBNetDevice : IDevice
+    public abstract class AbstractRGBNetDevice
     {
         #region Properties & Fields
 

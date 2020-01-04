@@ -61,10 +61,10 @@ namespace Aurora.Controls
 
         private void UpdateControls()
         {
-            this.lstDevices.ItemsSource = Global.dev_manager.DeviceContainers.OrderBy(dc => dc.Device.GetDeviceName()).Concat(Global.dev_manager.NotInitializedDeviceContainers.OrderBy(dc => dc.Device.GetDeviceName()));
+            this.lstDeviceConnectors.ItemsSource = Global.dev_manager.DeviceContainers.OrderBy(dc => dc.GetConnectorName());
 
 
-            this.lstDevices.Items.Refresh();
+            this.lstDeviceConnectors.Items.Refresh();
         }
 
         private void btnRestartAll_Click(object sender, RoutedEventArgs e)

@@ -9,33 +9,31 @@ using Aurora.Settings;
 
 namespace Device_Example
 {
-    public class ExampleDevice : Aurora.Devices.Device
+    public class ExampleDeviceConnector : AuroraDeviceConnector 
     {
-        protected override string DeviceName => "Example Device";
+        protected override string ConnectorName => "Example Connector";
 
-        public override bool Initialize()
+        protected override bool InitializeImpl()
         {
-            LogInfo("Initializing example!");
+            LogError("Initializing example!");
 
-            return isInitialized = true;
-        }
-
-        public override void Shutdown()
-        {
-            LogInfo("Shutting down example!");
-
-            isInitialized = false;
-        }
-
-        public override bool UpdateDevice(Dictionary<DeviceKeys, System.Drawing.Color> keyColors)
-        {
-            //Log("Updating!");
             return true;
+        }
+
+        protected override void ShutdownImpl()
+        {
+            LogError("Shutting down example!");
+
         }
 
         protected override void RegisterVariables(VariableRegistry local)
         {
-            local.Register($"{DeviceName}_devicekey", DeviceKeys.Peripheral, "Key to Use", DeviceKeys.MOUSEPADLIGHT15, DeviceKeys.Peripheral_Logo);
+            local.Register($"{ConnectorName}_devicekey", DeviceKeys.Peripheral, "Key to Use", DeviceKeys.MOUSEPADLIGHT15, DeviceKeys.Peripheral_Logo);
+        }
+
+        protected override List<AuroraDevice> GetDevices()
+        {
+            throw new NotImplementedException();
         }
     }
 }

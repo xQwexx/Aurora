@@ -8,51 +8,57 @@ using System.Threading.Tasks;
 
 namespace Device_Drevo
 {
-    public class DrevoDevice : Aurora.Devices.Device
+    public class DrevoDeviceConnector : AuroraDeviceConnector
     {
-        protected override string DeviceName => "Drevo";
+        protected override string ConnectorName => "Drevo";
 
-        public override bool Initialize() => isInitialized = DrevoRadiSDK.DrevoRadiInit();
+        protected override List<AuroraDevice> GetDevices()
+        {
+            return new List<AuroraDevice>() { new DrevoDevice() };
+        }
 
-        public override void Shutdown()
+        protected override bool InitializeImpl() => DrevoRadiSDK.DrevoRadiInit();
+
+        protected override void ShutdownImpl()
         {
             DrevoRadiSDK.DrevoRadiShutdown();
-            isInitialized = false;
             return;
         }
 
-        public override bool UpdateDevice(Dictionary<DeviceKeys, System.Drawing.Color> keyColors)
+        public class DrevoDevice : AuroraKeyboardDevice
         {
-            if (!isInitialized)
-                return false;
+            protected override string DeviceName => "Drevo";
 
-            try
+            protected override bool UpdateDeviceImpl(DeviceColorComposition composition)
             {
-                byte[] bitmap = new byte[392];
-                bitmap[0] = 0xF3;
-                bitmap[1] = 0x01;
-                bitmap[2] = 0x00;
-                bitmap[3] = 0x7F;
-                int index = 0;
-                foreach (var key in keyColors)
+                try
                 {
-                    index = DrevoRadiSDK.ToDrevoBitmap((int)key.Key);
-                    if (index != -1)
+                    byte[] bitmap = new byte[392];
+                    bitmap[0] = 0xF3;
+                    bitmap[1] = 0x01;
+                    bitmap[2] = 0x00;
+                    bitmap[3] = 0x7F;
+                    int index = 0;
+                    foreach (var key in composition.keyColors)
                     {
-                        index = index * 3 + 4;
-                        bitmap[index] = key.Value.R;
-                        bitmap[index + 1] = key.Value.G;
-                        bitmap[index + 2] = key.Value.B;
+                        index = DrevoRadiSDK.ToDrevoBitmap((int)key.Key);
+                        if (index != -1)
+                        {
+                            index = index * 3 + 4;
+                            bitmap[index] = key.Value.R;
+                            bitmap[index + 1] = key.Value.G;
+                            bitmap[index + 2] = key.Value.B;
+                        }
                     }
-                }
 
-                DrevoRadiSDK.DrevoRadiSetRGB(bitmap, 392);
-                return true;
-            }
-            catch (Exception exc)
-            {
-                LogError("Drevo device, error when updating device. Error: " + exc);
-                return false;
+                    DrevoRadiSDK.DrevoRadiSetRGB(bitmap, 392);
+                    return true;
+                }
+                catch (Exception exc)
+                {
+                    LogError("Drevo device, error when updating device. Error: " + exc);
+                    return false;
+                }
             }
         }
     }

@@ -12,14 +12,19 @@ using LedCSharp;
 
 namespace Device_Logitech
 {
-    public class LogitechDevice : Device
+    public class LogitechDeviceConnector : AuroraDeviceConnector
     {
-        protected override string DeviceName => "Logitech";
+        protected override string ConnectorName => "Logitech";
 
-        public override bool Initialize()
+        protected override List<AuroraDevice> GetDevices()
         {
-            if (GlobalVarRegistry.GetVariable<bool>($"{DeviceName}_override"))
-                LogitechGSDK.GHUB = GlobalVarRegistry.GetVariable<DLLType>($"{DeviceName}_dlltype") == DLLType.GHUB;
+            return new List<AuroraDevice>() { new LogitechDevice() };
+        }
+
+        protected override bool InitializeImpl()
+        {
+            if (GlobalVarRegistry.GetVariable<bool>($"{ConnectorName}_override"))
+                LogitechGSDK.GHUB = GlobalVarRegistry.GetVariable<DLLType>($"{ConnectorName}_dlltype") == DLLType.GHUB;
             else
                 LogitechGSDK.GHUB = Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "LGHUB"));
 
@@ -27,38 +32,42 @@ namespace Device_Logitech
             {
                 LogitechGSDK.LogiLedSaveCurrentLighting();
                 LogitechGSDK.LogiLedSetLighting(Color.Black);
-                return isInitialized = true;
+                return true;
             }
 
             LogError("Failed to Initialize Logitech!");
-            return isInitialized = false;
+            return false;
         }
 
-        public override void Shutdown()
+        protected override void ShutdownImpl()
         {
-            isInitialized = false;
             LogitechGSDK.LogiLedRestoreLighting();
             LogitechGSDK.LogiLedShutdown();
         }
 
-        public override bool UpdateDevice(Dictionary<DeviceKeys, System.Drawing.Color> keyColors)
+
+    }
+    public class LogitechDevice : AuroraDevice
+    {
+
+        protected override void RegisterVariables(VariableRegistry local)
         {
-            foreach (var key in keyColors)
+            local.Register($"{DeviceName}_override", false, "Override DLL");
+            local.Register($"{DeviceName}_dlltype", DLLType.LGS, "DLL Type");
+        }
+
+        protected override bool UpdateDeviceImpl(DeviceColorComposition composition)
+        {
+            foreach (var key in composition.keyColors)
             {
                 if (KeyMap.TryGetValue(key.Key, out var logiKey))
                     LogitechGSDK.LogiLedSetLightingForKeyWithKeyName(logiKey, key.Value);
                 else if (PeripheralMap.TryGetValue(key.Key, out var peripheral))
                     LogitechGSDK.LogiLedSetLightingForTargetZone(peripheral.type, peripheral.zone, key.Value);
                 else
-                    LogitechGSDK.LogiLedSetLightingForTargetZone(DeviceType.Keyboard, 2,Color.Red);
+                    LogitechGSDK.LogiLedSetLightingForTargetZone(LedCSharp.DeviceType.Keyboard, 2, Color.Red);
             }
             return true;
-        }
-
-        protected override void RegisterVariables(VariableRegistry local)
-        {
-            local.Register($"{DeviceName}_override", false, "Override DLL");
-            local.Register($"{DeviceName}_dlltype", DLLType.LGS, "DLL Type");
         }
 
         private static readonly Dictionary<DeviceKeys, LedId> KeyMap = new Dictionary<DeviceKeys, LedId>()
@@ -182,10 +191,14 @@ namespace Device_Logitech
 
         private static readonly Dictionary<DeviceKeys, (DeviceType type, int zone)> PeripheralMap = new Dictionary<DeviceKeys, (DeviceType, int)>()
         {
-            [DeviceKeys.Peripheral_Logo] = (DeviceType.Mouse,1),
+            [DeviceKeys.Peripheral_Logo] = (DeviceType.Mouse, 1),
             [DeviceKeys.Peripheral_FrontLight] = (DeviceType.Mouse, 0),
             [DeviceKeys.Peripheral_ScrollWheel] = (DeviceType.Mouse, 2),
             [DeviceKeys.MOUSEPADLIGHT1] = (DeviceType.Mousemat, 0)
         };
+
+        protected override string DeviceName => "Logitech";
+
+        protected override AuroraDeviceType AuroraDeviceType => AuroraDeviceType.Keyboard;
     }
 }
