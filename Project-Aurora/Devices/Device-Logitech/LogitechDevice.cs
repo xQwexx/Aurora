@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Aurora.Devices;
 using Aurora.Settings;
 using LedCSharp;
+using Aurora.Utils;
 
 namespace Device_Logitech
 {
@@ -26,7 +27,7 @@ namespace Device_Logitech
             if (LogitechGSDK.LogiLedInit())
             {
                 LogitechGSDK.LogiLedSaveCurrentLighting();
-                LogitechGSDK.LogiLedSetLighting(Color.Black);
+                LogitechGSDK.LogiLedSetLighting(GlobalVarRegistry.GetVariable<RealColor>($"{DeviceName}_color").GetDrawingColor());
                 return isInitialized = true;
             }
 
@@ -49,14 +50,23 @@ namespace Device_Logitech
                     LogitechGSDK.LogiLedSetLightingForKeyWithKeyName(logiKey, key.Value);
                 else if (PeripheralMap.TryGetValue(key.Key, out var peripheral))
                     LogitechGSDK.LogiLedSetLightingForTargetZone(peripheral.type, peripheral.zone, key.Value);
-                else
-                    LogitechGSDK.LogiLedSetLightingForTargetZone(DeviceType.Keyboard, 2,Color.Red);
+                else if (key.Key == DeviceKeys.BACKSLASH_UK)
+                    LogitechGSDK.LogiLedSetLightingForKeyWithHidCode(0x64, key.Value);
+                else if (key.Key == DeviceKeys.HASHTAG)
+                    LogitechGSDK.LogiLedSetLightingForKeyWithHidCode(0x32, key.Value);
             }
             return true;
         }
 
         protected override void RegisterVariables(VariableRegistry local)
         {
+            //hack to not have to reference wpf stuff to get the Media.Color :(
+            var black = new RealColor();
+            black.SetDrawingColor(Color.Black);
+            var white = new RealColor();
+            white.SetDrawingColor(Color.White);
+
+            local.Register($"{DeviceName}_color", black, "Default Color", white, black);
             local.Register($"{DeviceName}_override", false, "Override DLL");
             local.Register($"{DeviceName}_dlltype", DLLType.LGS, "DLL Type");
         }
@@ -182,7 +192,7 @@ namespace Device_Logitech
 
         private static readonly Dictionary<DeviceKeys, (DeviceType type, int zone)> PeripheralMap = new Dictionary<DeviceKeys, (DeviceType, int)>()
         {
-            [DeviceKeys.Peripheral_Logo] = (DeviceType.Mouse,1),
+            [DeviceKeys.Peripheral_Logo] = (DeviceType.Mouse, 1),
             [DeviceKeys.Peripheral_FrontLight] = (DeviceType.Mouse, 0),
             [DeviceKeys.Peripheral_ScrollWheel] = (DeviceType.Mouse, 2),
             [DeviceKeys.MOUSEPADLIGHT1] = (DeviceType.Mousemat, 0)
