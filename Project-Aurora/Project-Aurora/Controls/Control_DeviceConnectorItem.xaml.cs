@@ -45,12 +45,13 @@ namespace Aurora.Controls
         {
             InitializeComponent();
 
+            Global.dev_manager.NewDevicesInitialized += Update_controls_timer_Elapsed;
             Timer update_controls_timer = new Timer(1000); //Update every second
             update_controls_timer.Elapsed += Update_controls_timer_Elapsed;
             update_controls_timer.Start();
         }
 
-        private void Update_controls_timer_Elapsed(object sender, ElapsedEventArgs e)
+        private void Update_controls_timer_Elapsed(object sender, EventArgs e)
         {
             try
             {

@@ -23,7 +23,7 @@ namespace Aurora.Devices
         public IEnumerable<IAuroraDevice> InitializedDevices => Devices.Where(d => d.IsConnected());*/
 
 
-        private const int retryInterval = 10000;
+        private const int retryInterval = 100000;
         private const int retryAttemps = 5;
         private int retryAttemptsLeft = retryAttemps;
         private Thread retryThread;
@@ -158,8 +158,8 @@ namespace Aurora.Devices
         public void RegisterVariables()
         {
             //Register any variables
-            foreach (var device in Devices)
-                Global.Configuration.VarRegistry.Combine(device.GetRegisteredVariables());
+            foreach (var connector in DeviceContainers)
+                Global.Configuration.VarRegistry.Combine(connector.GetRegisteredVariables());
         }
 
         public void Initialize(bool forceRetry = false)
@@ -182,7 +182,7 @@ namespace Aurora.Devices
 
         private void RetryInitialize()
         {
-            for (int try_count = 0; try_count < retryAttemps; try_count++)
+            for (int try_count = 0; try_count < retryAttemps || !AnyInitialized(); try_count++)
             {
                 if (suspended)
                     return;
@@ -198,12 +198,13 @@ namespace Aurora.Devices
 
                 Thread.Sleep(retryInterval);
             }
+
         }
 
         public void InitializeOnce()
         {
-            if (!AnyInitialized())
-                Initialize();
+            /*if (!AnyInitialized())
+                Initialize();*/
         }
 
         public bool AnyInitialized() => DeviceContainers.Where(d => d.IsInitialized()).Any();

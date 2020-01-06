@@ -17,7 +17,7 @@ namespace Aurora.Devices
         public event EventHandler NewSuccessfulInitiation;
         private int DisconnectedDeviceCount = 0;
         private int UpdatedDeviceCount = 0;
-        private SemaphoreSlim InitIsOngoing = new SemaphoreSlim(1, 1);
+        private SemaphoreSlim SingleThread = new SemaphoreSlim(1, 1);
 
 
         protected abstract string ConnectorName { get; }
@@ -35,28 +35,36 @@ namespace Aurora.Devices
         /// </summary>
         public async void Initialize()
         {
-            await InitIsOngoing.WaitAsync();
+            await SingleThread.WaitAsync();
 
-            if (IsInitialized() || Global.Configuration.devices_disabled.Contains(GetType()))
-                return;
-            Global.logger.Info("Start initializing Connector: " + GetConnectorName());
-            if (await Task.Run(() => InitializeImpl()))
+            if (!IsInitialized() && !Global.Configuration.devices_disabled.Contains(GetType()))
             {
-                DisconnectedDeviceCount = 0;
-                devices = GetDevices();
-                foreach (var device in Devices)
+                Global.logger.Info("Start initializing Connector: " + GetConnectorName());
+                try
                 {
-                    device.ConnectionHandler += ConnectionHandling;
-                    device.UpdateFinished += DeviceUpdated;
-                    device.Connect();
+                    if (await Task.Run(() => InitializeImpl()))
+                    {
+                        DisconnectedDeviceCount = 0;
+                        devices = GetDevices();
+                        foreach (var device in Devices)
+                        {
+                            Global.Configuration.VarRegistry.Combine(device.GetRegisteredVariables());
+                            device.ConnectionHandler += ConnectionHandling;
+                            device.UpdateFinished += DeviceUpdated;
+                            device.Connect();
+                        }
+                        isInitialized = true;
+                        NewSuccessfulInitiation?.Invoke(this, new EventArgs());
+
+                    }
                 }
-                isInitialized = true;
-                NewSuccessfulInitiation?.Invoke(this, new EventArgs());
-
+                catch (Exception exc)
+                {
+                    Global.logger.Info("Connector, " + GetConnectorName() + ", throwed exception:" + exc.ToString());
+                }
+                Global.logger.Info("Connector, " + GetConnectorName() + ", was" + (IsInitialized() ? "" : " not") + " initialized");
             }
-            Global.logger.Info("Connector, " + GetConnectorName() + ", was" + (IsInitialized() ? "" : " not") + " initialized");
-
-            InitIsOngoing.Release();
+            SingleThread.Release();
 
         }
 
@@ -94,15 +102,29 @@ namespace Aurora.Devices
         /// <summary>
         /// Is called last. Dispose of the devices here
         /// </summary>
-        public void Shutdown()
+        public async void Shutdown()
         {
-            if (IsInitialized())
+            await SingleThread.WaitAsync();
+
+            try
             {
-                devices.Clear();
-                ShutdownImpl();
-                isInitialized = false;
-                Global.logger.Info("Connector, " + GetConnectorName() + ", was shutdown");
+                if (IsInitialized())
+                {
+                    foreach (var device in Devices)
+                    {
+                        device.Disconnect();
+                    }
+                    devices.Clear();
+                    await Task.Run(() => ShutdownImpl());
+                    isInitialized = false;
+                    Global.logger.Info("Connector, " + GetConnectorName() + ", was shutdown");
+                }
             }
+            catch (Exception exc)
+            {
+                Global.logger.Info("Connector, " + GetConnectorName() + ", throwed exception:" + exc.ToString());
+            }
+            SingleThread.Release();
         }
 
         protected abstract void ShutdownImpl();

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.ExceptionServices;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using Aurora.Settings;
@@ -23,6 +25,8 @@ namespace Aurora.Devices
         /// <summary>
         /// Is called every frame (30fps). Update the device here
         /// </summary>
+
+        //[HandleProcessCorruptedStateExceptions, SecurityCritical]
         public async void UpdateDevice(DeviceColorComposition composition)
         {
             if (IsConnected())
@@ -38,15 +42,22 @@ namespace Aurora.Devices
                 {
                     UpdateIsOngoing = true;
                     Watch.Restart();
-
-                    bool UpdateSuccess = await Task.Run(() => UpdateDeviceImpl(composition));
+                    try
+                    {
+                        if (!await Task.Run(() => UpdateDeviceImpl(composition)))
+                        {
+                            LogError(DeviceName + " device, error when updating device.");
+                        }
+                    }
+                    catch(Exception exc)
+                    {
+                        LogError(DeviceName + " device, error when updating device. Exception: " + exc.Message);
+                    }
+                    
 
                     Watch.Stop();
                     LastUpdateTime = Watch.ElapsedMilliseconds;
-                    if(!UpdateSuccess)
-                    {
-                        LogError(DeviceName + " device, error when updating device.");
-                    }
+
 
                     UpdateFinished.Invoke(this, new EventArgs());
                     UpdateIsOngoing = false;

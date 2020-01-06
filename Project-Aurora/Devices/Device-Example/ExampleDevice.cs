@@ -33,7 +33,7 @@ namespace Device_Example
 
         protected override List<AuroraDevice> GetDevices()
         {
-            throw new NotImplementedException();
+            return new List<AuroraDevice>();
         }
     }
 }

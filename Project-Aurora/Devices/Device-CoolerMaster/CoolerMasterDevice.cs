@@ -43,12 +43,11 @@ namespace Device_CoolerMaster
             return devices;
         }
     }
-    public class CoolerMasterDevice : AuroraDevice
+    public class CoolerMasterDevice : AuroraKeyboardDevice
     {
         private readonly Native.DEVICE_INDEX DevicesIndex;
         protected override string DeviceName => "CoolerMaster";
 
-        protected override AuroraDeviceType AuroraDeviceType => throw new NotImplementedException();
         public CoolerMasterDevice(Native.DEVICE_INDEX index)
         {
             DevicesIndex = index;
