@@ -32,16 +32,10 @@ namespace Device_Corsair
                 LogError("Error requesting cuesdk exclusive control:" + CUE.GetLastError());
                 return false;
             }
-
-            return true;
-        }
-        protected override List<AuroraDevice> GetDevices()
-        {
-            List<AuroraDevice> devices = new List<AuroraDevice>();
             for (int i = 0; i < deviceInfos.Count; i++)
                 devices.Add(new CorsairDevice(deviceInfos[i], i));
 
-            return devices;
+            return devices.Any();
         }
 
         protected override void ShutdownImpl()
@@ -93,7 +87,7 @@ namespace Device_Corsair
                 case CorsairDeviceType.Mouse:
                     return AuroraDeviceType.Mouse;
                 case CorsairDeviceType.MouseMat:
-                    return AuroraDeviceType.MouseMat;
+                    return AuroraDeviceType.Mousepad;
                 case CorsairDeviceType.HeadsetStand:
                     return AuroraDeviceType.HeadsetStand;
                 case CorsairDeviceType.Headset:

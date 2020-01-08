@@ -56,10 +56,8 @@ namespace Device_Asus
                     device.Id = GetDeviceId(dev, asusDevices);
                     devices.Add(device);
                 }
-                if (devices.Any())
-                {
-                    return true;
-                }
+
+                return devices.Any();
             }
             catch (Exception exc)
             {
@@ -103,11 +101,6 @@ namespace Device_Asus
         {
             AsusSdk?.ReleaseControl(0);
             AsusSdk = null;
-        }
-
-        protected override List<AuroraDevice> GetDevices()
-        {
-            return Devices.ToArray().ToList();
         }
 
         public IAuraSyncDevice GetNewInstanceOfDeviceById(int id)

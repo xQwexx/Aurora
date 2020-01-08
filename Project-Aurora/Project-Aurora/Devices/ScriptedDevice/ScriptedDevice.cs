@@ -53,7 +53,13 @@ namespace Aurora.Devices.ScriptedDevice
         {
             try
             {
-                return script.Initialize();
+               if (script.Initialize())
+                {
+                    devices.Add(new ScriptedDevice(script));
+                    return true;
+                }
+                return false;
+
             }
             catch (Exception exc)
             {
@@ -62,11 +68,6 @@ namespace Aurora.Devices.ScriptedDevice
 
                 return false;
             }
-        }
-
-        public bool Reconnect()
-        {
-            throw new NotImplementedException();
         }
 
         public override void Reset()
@@ -102,11 +103,6 @@ namespace Aurora.Devices.ScriptedDevice
                 return script.GetRegisteredVariables();
             else
                 return new VariableRegistry();
-        }
-
-        protected override List<AuroraDevice> GetDevices()
-        {
-            throw new NotImplementedException();
         }
     }
     public class ScriptedDevice : Aurora.Devices.AuroraDevice

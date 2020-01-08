@@ -14,15 +14,20 @@ namespace Device_Vulcan
     {
         protected override string ConnectorName => "Vulcan";
 
-        protected override List<AuroraDevice> GetDevices()
+        protected override bool InitializeImpl()
         {
-            return new List<AuroraDevice>() { new VulcanDevice() };
+            if (VulcanKeyboard.Initialize())
+            {
+                devices.Add(new VulcanDevice());
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
-        protected override bool InitializeImpl() => VulcanKeyboard.Initialize();
-
         protected override void ShutdownImpl() => VulcanKeyboard.Disconnect();
-
 
        
     }

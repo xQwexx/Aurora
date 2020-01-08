@@ -1412,7 +1412,7 @@ namespace Aurora.Devices
         Keyboard,
         Mouse,
         Headset,
-        MouseMat,
+        Mousepad,
         HeadsetStand,
         Unkown
     }

@@ -15,17 +15,13 @@ namespace Device_Wooting
     {
         protected override string ConnectorName => "Wooting";
 
-        protected override List<AuroraDevice> GetDevices()
-        {
-            return new List<AuroraDevice>() { new WootingDevice() };
-        }
-
         protected override bool InitializeImpl()
         {
             try
             {
                 if (RGBControl.IsConnected())
                 {
+                    devices.Add(new WootingDevice());
                     return true;
                 }
             }

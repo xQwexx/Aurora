@@ -143,23 +143,16 @@ namespace Device_Dualshock4
             DS4Devices.findControllers();
             var controllers = DS4Devices.getDS4Controllers();
 
+            foreach (var device in controllers)
+            {
+                devices.Add(new DS4Container(device));
+            }
             return controllers.Any();
         }
 
         protected override void ShutdownImpl()
         {
             DS4Devices.stopControllers();
-        }
-
-        protected override List<AuroraDevice> GetDevices()
-        {
-            List<AuroraDevice> devices = new List<AuroraDevice>();
-            var controllers = DS4Devices.getDS4Controllers();
-            foreach (var device in controllers)
-            {
-                devices.Add(new DS4Container(device));
-            }
-            return devices;
         }
     }
 }

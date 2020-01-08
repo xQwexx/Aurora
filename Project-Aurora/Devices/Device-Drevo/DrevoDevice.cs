@@ -12,12 +12,18 @@ namespace Device_Drevo
     {
         protected override string ConnectorName => "Drevo";
 
-        protected override List<AuroraDevice> GetDevices()
+        protected override bool InitializeImpl()
         {
-            return new List<AuroraDevice>() { new DrevoDevice() };
+            if (DrevoRadiSDK.DrevoRadiInit())
+            {
+                devices.Add(new DrevoDevice());
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
-
-        protected override bool InitializeImpl() => DrevoRadiSDK.DrevoRadiInit();
 
         protected override void ShutdownImpl()
         {

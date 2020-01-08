@@ -16,7 +16,7 @@ namespace Device_Example
         protected override bool InitializeImpl()
         {
             LogError("Initializing example!");
-
+            //Add the created devices to the devices member
             return true;
         }
 
@@ -31,9 +31,5 @@ namespace Device_Example
             local.Register($"{ConnectorName}_devicekey", DeviceKeys.Peripheral, "Key to Use", DeviceKeys.MOUSEPADLIGHT15, DeviceKeys.Peripheral_Logo);
         }
 
-        protected override List<AuroraDevice> GetDevices()
-        {
-            return new List<AuroraDevice>();
-        }
     }
 }

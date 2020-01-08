@@ -21,7 +21,11 @@ namespace Device_CoolerMaster
             foreach (var device in Native.DEVICES.Where(d => d != Native.DEVICE_INDEX.DEFAULT))
             {
                 if (Native.IsDevicePlug(device) && Native.EnableLedControl(true, device))
+                {
+                    devices.Add(new CoolerMasterDevice(device));
                     InitializedDevices.Add(device);
+                }
+                    
             }
 
             return InitializedDevices.Any();
@@ -32,17 +36,8 @@ namespace Device_CoolerMaster
             foreach (var dev in InitializedDevices)
                 Native.EnableLedControl(false, dev);
         }
-
-        protected override List<AuroraDevice> GetDevices()
-        {
-            List<AuroraDevice> devices = new List<AuroraDevice>();
-            foreach (var device in InitializedDevices)
-            {
-                devices.Add(new CoolerMasterDevice(device));
-            }
-            return devices;
-        }
     }
+
     public class CoolerMasterDevice : AuroraKeyboardDevice
     {
         private readonly Native.DEVICE_INDEX DevicesIndex;

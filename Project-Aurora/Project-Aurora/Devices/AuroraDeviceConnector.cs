@@ -19,7 +19,6 @@ namespace Aurora.Devices
         private int UpdatedDeviceCount = 0;
         private SemaphoreSlim SingleThread = new SemaphoreSlim(1, 1);
 
-
         protected abstract string ConnectorName { get; }
         public string GetConnectorName() => ConnectorName;
         public virtual void Reset()
@@ -27,7 +26,6 @@ namespace Aurora.Devices
             Shutdown();
             Initialize();
         }
-
 
 
         /// <summary>
@@ -45,7 +43,6 @@ namespace Aurora.Devices
                     if (await Task.Run(() => InitializeImpl()))
                     {
                         DisconnectedDeviceCount = 0;
-                        devices = GetDevices();
                         foreach (var device in Devices)
                         {
                             Global.Configuration.VarRegistry.Combine(device.GetRegisteredVariables());
@@ -129,12 +126,6 @@ namespace Aurora.Devices
 
         protected abstract void ShutdownImpl();
 
-
-        /// <summary>
-        /// Get the all the devices.
-        /// </summary>
-        /// <returns>List of devices</returns>
-        protected abstract List<AuroraDevice> GetDevices();
 
         public bool IsInitialized() => isInitialized;
 

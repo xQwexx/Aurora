@@ -17,11 +17,6 @@ namespace Device_Logitech
     {
         protected override string ConnectorName => "Logitech";
 
-        protected override List<AuroraDevice> GetDevices()
-        {
-            return new List<AuroraDevice>() { new LogitechDevice() };
-        }
-
         protected override bool InitializeImpl()
         {
             if (GlobalVarRegistry.GetVariable<bool>($"{ConnectorName}_override"))
@@ -34,6 +29,7 @@ namespace Device_Logitech
                 LogitechGSDK.LogiLedSaveCurrentLighting();
 
                 LogitechGSDK.LogiLedSetLighting(GlobalVarRegistry.GetVariable<RealColor>($"{ConnectorName}_color").GetDrawingColor());
+                devices.Add(new LogitechDevice());
                 return true;
             }
 
