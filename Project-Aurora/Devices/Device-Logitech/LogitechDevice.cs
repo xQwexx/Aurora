@@ -24,6 +24,8 @@ namespace Device_Logitech
             else
                 LogitechGSDK.GHUB = Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "LGHUB"));
 
+            LogInfo("Trying to initialize Logitech using the dll for " + (LogitechGSDK.GHUB ? "GHUB" : "LGS"));
+
             if (LogitechGSDK.LogiLedInit())
             {
                 LogitechGSDK.LogiLedSaveCurrentLighting();
@@ -31,7 +33,6 @@ namespace Device_Logitech
                 return isInitialized = true;
             }
 
-            LogError("Failed to Initialize Logitech!");
             return isInitialized = false;
         }
 
