@@ -14,6 +14,20 @@ using System.Threading.Tasks;
 
 namespace Aurora.Devices
 {
+
+    public class UniqueDeviceId
+    {
+        public AuroraDeviceType Type = AuroraDeviceType.Unkown;
+        public string ContainerName = "";
+        public string DeviceName = "";
+        public UniqueDeviceId(){ }
+        public UniqueDeviceId(AuroraDeviceType type, string containerName, string deviceName)
+        {
+            Type = type;
+            ContainerName = containerName;
+            DeviceName = deviceName;
+        }
+    }
     public class DeviceManager : IDisposable
     {
         public List<AuroraDeviceConnector> DeviceContainers { get; } = new List<AuroraDeviceConnector>();
@@ -212,7 +226,36 @@ namespace Aurora.Devices
         public void Shutdown() => DeviceContainers.ForEach(d => d.Shutdown());
 
         public void ResetDevices() => DeviceContainers.ForEach(d => d.Reset());
-
+        public AuroraDevice GetDevice(UniqueDeviceId id)
+        {
+            var container = (AuroraDeviceConnector)DeviceContainers.Where(dc => dc.GetConnectorName() == id.ContainerName).Select(dc => dc);
+            if (container != null)
+            {
+                var device = (AuroraDevice)container.Devices.Where(d => d.GetDeviceName() == id.DeviceName).Select(d => d);
+                if(device != null && device.GetDeviceType() == id.Type)
+                {
+                    return device;
+                }
+                Global.logger.Error("Couldn't found a Device with a name: " + id.DeviceName + " in the Container: " + id.ContainerName);
+            }
+            else
+            {
+                Global.logger.Error("Couldn't found a DeviceContainer with a name: " + id.ContainerName);
+            }
+            return null;
+        }
+        public List<UniqueDeviceId> GetDeviceIds()
+        {
+            List<UniqueDeviceId> deviceIds = new List<UniqueDeviceId>();
+            foreach (var container in DeviceContainers)
+            {
+                foreach (var device in container.Devices)
+                {
+                    deviceIds.Add(new UniqueDeviceId(device.GetDeviceType(), container.GetConnectorName(), device.GetDeviceName()));
+                }
+            }
+            return deviceIds;
+        }
         public string GetDevices()
         {
             string devices_info = "";

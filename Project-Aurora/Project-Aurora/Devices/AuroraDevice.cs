@@ -71,7 +71,7 @@ namespace Aurora.Devices
         {
             return IsConnected() ? LastUpdateTime + " ms" : "";
         }
-        public void Connect()
+        public async void Connect()
         {
             if (GetDeviceType() == AuroraDeviceType.Keyboard && Global.Configuration.devices_disable_keyboard ||
                 GetDeviceType() == AuroraDeviceType.Mouse && Global.Configuration.devices_disable_mouse ||
@@ -81,18 +81,36 @@ namespace Aurora.Devices
             }
             else
             {
-                DeviceIsConnected = true;
-                ConnectionHandler.Invoke(this, new EventArgs());
+                try
+                {
+                    if (await Task.Run(() => ConnectImpl()))
+                    {
+                        DeviceIsConnected = true;
+                        ConnectionHandler.Invoke(this, new EventArgs());
+                    }
+                }
+                catch (Exception exc)
+                {
+                    Global.logger.Info("Device, " + GetDeviceName() + ", throwed exception:" + exc.ToString());
+                }
             }
+        }
+        protected virtual bool ConnectImpl()
+        {
+            return true;
         }
 
         public void Disconnect() 
         {
             if(IsConnected())
             {
+                DisconnectImpl();
                 DeviceIsConnected = false;
                 ConnectionHandler.Invoke(this, new EventArgs());
             }
+        }
+        protected virtual void DisconnectImpl()
+        {
         }
 
         protected abstract string DeviceName { get; }
