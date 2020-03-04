@@ -133,6 +133,8 @@ namespace Aurora.Devices
                                                     ConnectorName + ": " + ConnectorSubDetails :
                                                     ConnectorName + ": Not Initialized";
         protected virtual string ConnectorSubDetails => "Initialized";
+
+        protected void LogInfo(string s) => Global.logger.Info(s);
         protected void LogError(string s) => Global.logger.Error(s);
 
         private VariableRegistry variableRegistry;

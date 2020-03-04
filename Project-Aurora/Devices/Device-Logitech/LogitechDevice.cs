@@ -24,6 +24,8 @@ namespace Device_Logitech
             else
                 LogitechGSDK.GHUB = Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "LGHUB"));
 
+            LogInfo("Trying to initialize Logitech using the dll for " + (LogitechGSDK.GHUB ? "GHUB" : "LGS"));
+
             if (LogitechGSDK.LogiLedInit())
             {
                 LogitechGSDK.LogiLedSaveCurrentLighting();
@@ -32,7 +34,6 @@ namespace Device_Logitech
                 devices.Add(new LogitechDevice());
                 return true;
             }
-
             LogError("Failed to Initialize Logitech!");
             return false;
         }
@@ -68,10 +69,8 @@ namespace Device_Logitech
                     LogitechGSDK.LogiLedSetLightingForKeyWithKeyName(logiKey, key.Value);
                 else if (PeripheralMap.TryGetValue(key.Key, out var peripheral))
                     LogitechGSDK.LogiLedSetLightingForTargetZone(peripheral.type, peripheral.zone, key.Value);
-                else if (key.Key == DeviceKeys.BACKSLASH_UK)
-                    LogitechGSDK.LogiLedSetLightingForKeyWithHidCode(0x64, key.Value);
-                else if (key.Key == DeviceKeys.HASHTAG)
-                    LogitechGSDK.LogiLedSetLightingForKeyWithHidCode(0x32, key.Value);
+                else if(HidCodeMap.TryGetValue(key.Key, out var hidId))
+                    LogitechGSDK.LogiLedSetLightingForKeyWithHidCode(hidId, key.Value);
             }
             return true;
         }
@@ -206,5 +205,11 @@ namespace Device_Logitech
         protected override string DeviceName => "Logitech";
 
         protected override AuroraDeviceType AuroraDeviceType => AuroraDeviceType.Keyboard;
+
+        private static readonly Dictionary<DeviceKeys, int> HidCodeMap = new Dictionary<DeviceKeys, int>()
+        {
+            [DeviceKeys.BACKSLASH_UK] = 0x64,
+            [DeviceKeys.HASHTAG] = 0x32
+        };
     }
 }
