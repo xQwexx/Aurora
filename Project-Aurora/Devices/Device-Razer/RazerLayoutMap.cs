@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Aurora.Devices;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aurora.Devices.Razer
+namespace Device_Razer
 {
     public static class RazerLayoutMap
     {

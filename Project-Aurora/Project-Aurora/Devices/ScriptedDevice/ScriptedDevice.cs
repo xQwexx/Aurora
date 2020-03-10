@@ -14,8 +14,6 @@ namespace Aurora.Devices.ScriptedDevice
         private bool crashed = false;
         private readonly dynamic script = null;
 
-        private System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
-        private long lastUpdateTime = 0;
         private string devicename;
 
         protected override string ConnectorName => "Script";

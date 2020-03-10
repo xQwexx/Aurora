@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using Aurora.Settings;
 using KeyboardCustom = Corale.Colore.Razer.Keyboard.Effects.Custom;
 using MousepadCustom = Corale.Colore.Razer.Mousepad.Effects.Custom;
+using Aurora.Devices;
 
-namespace Aurora.Devices.Razer
+namespace Device_Razer
 {
     public class RazerDeviceConnector : AuroraDeviceConnector
     {
@@ -40,16 +41,16 @@ namespace Aurora.Devices.Razer
                 /*if (Chroma.Instance.Query(Corale.Colore.Razer.Devices.BladeStealth).Connected || Chroma.Instance.Query(Corale.Colore.Razer.Devices.Blade14).Connected)
                     bladeLayout = true;*/
 
-               /* if (Global.Configuration.razer_first_time)
+               if (Aurora.Global.Configuration.razer_first_time)
                 {
-                    App.Current.Dispatcher.Invoke(() =>
+                    Aurora.App.Current.Dispatcher.Invoke(() =>
                     {
-                        RazerInstallInstructions instructions = new RazerInstallInstructions();
+                        Aurora.Devices.Razer.RazerInstallInstructions instructions = new Aurora.Devices.Razer.RazerInstallInstructions();
                         instructions.ShowDialog();
                     });
-                    Global.Configuration.razer_first_time = false;
-                    Settings.ConfigManager.Save(Global.Configuration);
-                }*/
+                    Aurora.Global.Configuration.razer_first_time = false;
+                    Aurora.Settings.ConfigManager.Save(Aurora.Global.Configuration);
+                }
 
                 return true;
             }
@@ -116,7 +117,7 @@ namespace Aurora.Devices.Razer
         {
             Dictionary<DeviceKeys, int[]> layout = RazerLayoutMap.GenericKeyboard;
 
-            if (Global.Configuration.keyboard_brand == PreferredKeyboard.Razer_Blade)
+            if (Aurora.Global.Configuration.keyboard_brand == PreferredKeyboard.Razer_Blade)
                 layout = RazerLayoutMap.Blade;
 
             if (layout.ContainsKey(key))

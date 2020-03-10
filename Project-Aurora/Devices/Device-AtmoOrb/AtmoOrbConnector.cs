@@ -1,5 +1,4 @@
-﻿using Aurora;
-using Aurora.Devices;
+﻿using Aurora.Devices;
 using Aurora.Settings;
 using System;
 using System.Collections.Generic;
@@ -74,7 +73,7 @@ namespace Device_AtmoOrb
 
                     averageColor = Aurora.Utils.BitmapUtils.GetRegionColor(
                         (Bitmap)composition.keyBitmap,
-                        new BitmapRectangle(0, 0, composition.keyBitmap.Width,
+                        new Aurora.BitmapRectangle(0, 0, composition.keyBitmap.Width,
                             composition.keyBitmap.Height)
                     );
                 }
@@ -89,7 +88,7 @@ namespace Device_AtmoOrb
             List<string> orbIDs = new List<string>();
             try
             {
-                string orb_ids = Global.Configuration.VarRegistry.GetVariable<string>($"{DeviceName}_orb_ids") ?? "";
+                string orb_ids = GlobalVarRegistry.GetVariable<string>($"{DeviceName}_orb_ids") ?? "";
                 orbIDs = orb_ids.Split(',').ToList();
             }
             catch (Exception exc)
@@ -115,7 +114,7 @@ namespace Device_AtmoOrb
                     // 2 = use lamp smoothing and validate by Orb ID
                     // 4 = validate by Orb ID
 
-                    if (Global.Configuration.VarRegistry.GetVariable<bool>($"{DeviceName}_use_smoothing"))
+                    if (GlobalVarRegistry.GetVariable<bool>($"{DeviceName}_use_smoothing"))
                         bytes[3] = 2;
                     else
                         bytes[3] = 4;
@@ -137,12 +136,8 @@ namespace Device_AtmoOrb
         }
         protected override void RegisterVariables(VariableRegistry local)
         {
-            if (local == null)
-            {
-                local = new VariableRegistry();
-                local.Register($"{DeviceName}_use_smoothing", true, "Use Smoothing");
-                local.Register($"{DeviceName}_orb_ids", "1", "Orb IDs", null, null, "For multiple IDs separate with comma");
-            }
+            local.Register($"{DeviceName}_use_smoothing", true, "Use Smoothing");
+            local.Register($"{DeviceName}_orb_ids", "1", "Orb IDs", null, null, "For multiple IDs separate with comma");
 
         }
     }

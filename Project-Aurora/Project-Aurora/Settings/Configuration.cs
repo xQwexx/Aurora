@@ -502,8 +502,6 @@ namespace Aurora.Settings
             devices_disable_mouse = false;
             devices_disable_headset = false;
             devices_disabled = new HashSet<Type>();
-            devices_disabled.Add(typeof(Devices.AtmoOrbDevice.AtmoOrbDevice));
-            devices_disabled.Add(typeof(Devices.NZXT.NZXTDevice));
             OverlaysInPreview = false;
 
             //Blackout and Night theme
@@ -578,7 +576,7 @@ namespace Aurora.Settings
 
             if (!config.unified_hid_disabled)
             {
-                config.devices_disabled.Add(typeof(Devices.UnifiedHID.UnifiedHIDDevice));
+                //config.devices_disabled.Add(typeof(Devices.UnifiedHID.UnifiedHIDDevice));
                 config.unified_hid_disabled = true;
             }
 
@@ -589,7 +587,7 @@ namespace Aurora.Settings
         {
             if (e.ErrorContext.Error.Message.Contains("Aurora.Devices.SteelSeriesHID.SteelSeriesHIDDevice") && e.CurrentObject is HashSet<Type> dd)
             {
-                dd.Add(typeof(Aurora.Devices.UnifiedHID.UnifiedHIDDevice));
+                //dd.Add(typeof(Aurora.Devices.UnifiedHID.UnifiedHIDDevice));
                 e.ErrorContext.Handled = true;
             }
         }

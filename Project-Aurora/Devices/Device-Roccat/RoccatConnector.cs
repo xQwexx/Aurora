@@ -22,7 +22,7 @@
  * - talkfx-c.dll (from: https://github.com/mwasilak/talkfx-c-wrapper , branch feature-ryos-mk-fx)
  */
 
-using Aurora;
+
 using Aurora.Devices;
 using Aurora.Settings;
 using Roccat_Talk.RyosTalkFX;
@@ -87,15 +87,15 @@ namespace Device_Roccat
             {
                 throw new Exception("No devices connected");
             }
-            if (Global.Configuration.roccat_first_time)
+            if (Aurora.Global.Configuration.roccat_first_time)
             {
-                App.Current.Dispatcher.Invoke(() =>
+                Aurora.App.Current.Dispatcher.Invoke(() =>
                 {
                     Aurora.Devices.Roccat.RoccatInstallInstructions instructions = new Aurora.Devices.Roccat.RoccatInstallInstructions();
                     instructions.ShowDialog();
                 });
-                Global.Configuration.roccat_first_time = false;
-                ConfigManager.Save(Global.Configuration);
+                Aurora.Global.Configuration.roccat_first_time = false;
+                ConfigManager.Save(Aurora.Global.Configuration);
             }
             return true;
         }
@@ -117,11 +117,11 @@ namespace Device_Roccat
         protected override bool UpdateDeviceImpl(DeviceColorComposition composition)
         {
             DeviceLayout layout = DeviceLayout.ISO;
-            if (Global.Configuration.keyboard_localization == PreferredKeyboardLocalization.dvorak
-                || Global.Configuration.keyboard_localization == PreferredKeyboardLocalization.us
-                || Global.Configuration.keyboard_localization == PreferredKeyboardLocalization.ru)
+            if (Aurora.Global.Configuration.keyboard_localization == PreferredKeyboardLocalization.dvorak
+                || Aurora.Global.Configuration.keyboard_localization == PreferredKeyboardLocalization.us
+                || Aurora.Global.Configuration.keyboard_localization == PreferredKeyboardLocalization.ru)
                 layout = DeviceLayout.ANSI;
-            else if (Global.Configuration.keyboard_localization == PreferredKeyboardLocalization.jpn)
+            else if (Aurora.Global.Configuration.keyboard_localization == PreferredKeyboardLocalization.jpn)
                 layout = DeviceLayout.JP;
 
             foreach (KeyValuePair<DeviceKeys, System.Drawing.Color> key in composition.keyColors)
@@ -137,7 +137,7 @@ namespace Device_Roccat
                 }
 
                 //set peripheral color to Roccat generic peripheral if enabled
-                if (Global.Configuration.VarRegistry.GetVariable<bool>($"{DeviceName}_enable_generic") == true)
+                if (GlobalVarRegistry.GetVariable<bool>($"{DeviceName}_enable_generic") == true)
                 {
                     generic_deactivated_first_time = true;
                     if (key.Key == DeviceKeys.Peripheral_Logo || key.Key == DeviceKeys.Peripheral)
@@ -174,7 +174,7 @@ namespace Device_Roccat
             }
 
             //send KeyboardState to Ryos only when enabled
-            if (Global.Configuration.VarRegistry.GetVariable<bool>($"{DeviceName}_enable_ryos"))
+            if (GlobalVarRegistry.GetVariable<bool>($"{DeviceName}_enable_ryos"))
             {
                 RyosTalkFX.SetMkFxKeyboardState(stateStruct, colorStruct, (byte)layout);
             }
@@ -195,7 +195,7 @@ namespace Device_Roccat
         {
             //Workaround
             //Global.logger.LogLine("restore Roccat generic");
-            System.Drawing.Color restore_fallback = Global.Configuration.VarRegistry.GetVariable<Aurora.Utils.RealColor>($"{DeviceName}_restore_fallback").GetDrawingColor();
+            System.Drawing.Color restore_fallback = GlobalVarRegistry.GetVariable<Aurora.Utils.RealColor>($"{DeviceName}_restore_fallback").GetDrawingColor();
             restore_fallback = System.Drawing.Color.FromArgb(255, Aurora.Utils.ColorUtils.MultiplyColorByScalar(restore_fallback, restore_fallback.A / 255.0D));
 
             //Global.logger.LogLine("restore Roccat generic" + restore_fallback + restore_fallback.R + restore_fallback.G + restore_fallback.B);

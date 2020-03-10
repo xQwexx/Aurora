@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="HidLibrary">
-      <HintPath>..\..\..\..\diogotr7\Project-Aurora\packages\hidlibrary.3.2.46.0\lib\HidLibrary.dll</HintPath>
+      <HintPath>..\..\packages\hidlibrary.3.2.46.0\lib\HidLibrary.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
@@ -58,6 +58,9 @@
       <Name>Project-Aurora</Name>
       <Private>False</Private>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="hidlibrary.3.2.46.0\lib\HidLibrary.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

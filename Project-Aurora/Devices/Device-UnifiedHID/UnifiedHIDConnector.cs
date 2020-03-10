@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using Aurora.Settings;
 using System.Threading;
 using System.Threading.Tasks;
 using HidLibrary;
 using System.ComponentModel;
 using System.Reflection;
 using Aurora.Devices;
-using Aurora;
+using Aurora.Settings;
 
 namespace Device_UnifiedHID
 {
@@ -90,12 +89,7 @@ namespace Device_UnifiedHID
         }
         protected override void RegisterVariables(VariableRegistry local)
         {
-            if (local == null)
-            {
-                local = new VariableRegistry();
-
-                local.Register($"UnifiedHID_{GetType().Name}_enable", false, $"Enable {(string.IsNullOrEmpty(DeviceName) ? GetType().Name : DeviceName)} in UnifiedHID");
-            }
+            local.Register($"UnifiedHID_{GetType().Name}_enable", false, $"Enable {(string.IsNullOrEmpty(DeviceName) ? GetType().Name : DeviceName)} in UnifiedHID");
         }
     }
 
