@@ -44,7 +44,14 @@ namespace Device_Roccat
             devices.Add(new RoccatDevice());
             return true;
         }
-
+        protected override void RunFirstTime()
+        {
+            Aurora.App.Current.Dispatcher.Invoke(() =>
+            {
+                RoccatInstallInstructions instructions = new RoccatInstallInstructions();
+                instructions.ShowDialog();
+            });
+        }
         protected override void ShutdownImpl()
         {
         }
@@ -87,16 +94,6 @@ namespace Device_Roccat
             {
                 throw new Exception("No devices connected");
             }
-            if (Aurora.Global.Configuration.roccat_first_time)
-            {
-                Aurora.App.Current.Dispatcher.Invoke(() =>
-                {
-                    Aurora.Devices.Roccat.RoccatInstallInstructions instructions = new Aurora.Devices.Roccat.RoccatInstallInstructions();
-                    instructions.ShowDialog();
-                });
-                Aurora.Global.Configuration.roccat_first_time = false;
-                ConfigManager.Save(Aurora.Global.Configuration);
-            }
             return true;
         }
         protected override void DisconnectImpl()
@@ -112,8 +109,8 @@ namespace Device_Roccat
             }
         }
 
-        byte[] stateStruct = new byte[110];
-        Roccat_Talk.TalkFX.Color[] colorStruct = new Roccat_Talk.TalkFX.Color[110];
+        readonly byte[] stateStruct = new byte[110];
+        readonly Roccat_Talk.TalkFX.Color[] colorStruct = new Roccat_Talk.TalkFX.Color[110];
         protected override bool UpdateDeviceImpl(DeviceColorComposition composition)
         {
             DeviceLayout layout = DeviceLayout.ISO;
@@ -145,7 +142,7 @@ namespace Device_Roccat
                         //Send to generic roccat device if color not equal or 1. time after generic got enabled
                         if (!previous_peripheral_Color.Equals(key.Value) || generic_activated_first_time == true)
                         {
-                            send_to_roccat_generic(key.Value);
+                            SendToRoccat(key.Value);
                             //talkFX.RestoreLedRgb(); //Does not even here work
 
                             previous_peripheral_Color = key.Value;
@@ -196,7 +193,7 @@ namespace Device_Roccat
             //Workaround
             //Global.logger.LogLine("restore Roccat generic");
             System.Drawing.Color restore_fallback = GlobalVarRegistry.GetVariable<Aurora.Utils.RealColor>($"{DeviceName}_restore_fallback").GetDrawingColor();
-            restore_fallback = System.Drawing.Color.FromArgb(255, Aurora.Utils.ColorUtils.MultiplyColorByScalar(restore_fallback, restore_fallback.A / 255.0D));
+            restore_fallback = CorrectAlpha(restore_fallback);
 
             //Global.logger.LogLine("restore Roccat generic" + restore_fallback + restore_fallback.R + restore_fallback.G + restore_fallback.B);
             talkFX.SetLedRgb(Zone.Event, KeyEffect.On, Speed.Fast, new Color(restore_fallback.R, restore_fallback.G, restore_fallback.B));
@@ -207,10 +204,10 @@ namespace Device_Roccat
             talkFX.RestoreLedRgb();
         }
 
-        private void send_to_roccat_generic(System.Drawing.Color color)
+        private void SendToRoccat(System.Drawing.Color color)
         {
             //Alpha necessary for Global Brightness modifier
-            color = System.Drawing.Color.FromArgb(255, Aurora.Utils.ColorUtils.MultiplyColorByScalar(color, color.A / 255.0D));
+            color = CorrectAlpha(color);
             talkFX.SetLedRgb(Zone.Event, KeyEffect.On, Speed.Fast, new Color(color.R, color.G, color.B)); ;
         }
         private Roccat_Talk.TalkFX.Color ConvertToRoccatColor(System.Drawing.Color color)
@@ -219,14 +216,9 @@ namespace Device_Roccat
         }
         protected override void RegisterVariables(VariableRegistry local)
         {
-            if (local == null)
-            {
-
-                local = new VariableRegistry();
-                local.Register($"{DeviceName}_enable_generic", true, "Enable Generic support");
-                local.Register($"{DeviceName}_enable_ryos", true, "Enable Ryos support");
-                local.Register($"{DeviceName}_restore_fallback", new Aurora.Utils.RealColor(System.Drawing.Color.FromArgb(255, 0, 0, 255)), "Color", new Aurora.Utils.RealColor(System.Drawing.Color.FromArgb(255, 255, 255, 255)), new Aurora.Utils.RealColor(System.Drawing.Color.FromArgb(0, 0, 0, 0)), "Set restore color for your generic roccat devices");
-            }
+            local.Register($"{DeviceName}_enable_generic", true, "Enable Generic support");
+            local.Register($"{DeviceName}_enable_ryos", true, "Enable Ryos support");
+            local.Register($"{DeviceName}_restore_fallback", new Aurora.Utils.RealColor(System.Drawing.Color.FromArgb(255, 0, 0, 255)), "Color", new Aurora.Utils.RealColor(System.Drawing.Color.FromArgb(255, 255, 255, 255)), new Aurora.Utils.RealColor(System.Drawing.Color.FromArgb(0, 0, 0, 0)), "Set restore color for your generic roccat devices");
         }
         public static Dictionary<DeviceKeys, byte> DeviceKeysMap = new Dictionary<DeviceKeys, byte>
         {

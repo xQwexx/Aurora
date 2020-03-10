@@ -40,6 +40,11 @@ namespace Aurora.Devices
                 Global.logger.Info("Start initializing Connector: " + GetConnectorName());
                 try
                 {
+                    if (!Global.Configuration.devices_not_first_time.Contains(GetType()))
+                    {
+                        RunFirstTime();
+                        Global.Configuration.devices_not_first_time.Add(GetType());
+                    }
                     if (await Task.Run(() => InitializeImpl()))
                     {
                         DisconnectedDeviceCount = 0;
@@ -50,9 +55,12 @@ namespace Aurora.Devices
                             device.UpdateFinished += DeviceUpdated;
                             device.Connect();
                         }
-                        isInitialized = true;
-                        NewSuccessfulInitiation?.Invoke(this, new EventArgs());
-
+                        devices = Devices.Where(d => d.IsConnected()).ToList();
+                        if (Devices.Any())
+                        {
+                            isInitialized = true;
+                            NewSuccessfulInitiation?.Invoke(this, new EventArgs());
+                        }
                     }
                 }
                 catch (Exception exc)
@@ -66,6 +74,7 @@ namespace Aurora.Devices
         }
 
         protected abstract bool InitializeImpl();
+        protected virtual void RunFirstTime() { }
 
         private void ConnectionHandling(object sender, EventArgs args)
         {

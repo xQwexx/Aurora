@@ -1,9 +1,9 @@
-﻿<Window x:Class="Aurora.Devices.Razer.RazerInstallInstructions"
+﻿<Window x:Class="Device_Razer.RazerInstallInstructions"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Aurora.Devices.Razer"
+             xmlns:local="clr-namespace:Device_Razer"
              mc:Ignorable="d" Height="479" Width="700" WindowStyle="ToolWindow" ResizeMode="NoResize" Title="First-time Razer Setup Instructions" Background="Transparent">
     <Grid>
         <Grid.ColumnDefinitions>

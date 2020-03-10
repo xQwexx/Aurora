@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Aurora.Devices.Razer
+namespace Device_Razer
 {
     /// <summary>
     /// Interaction logic for RazerInstallInstructions.xaml

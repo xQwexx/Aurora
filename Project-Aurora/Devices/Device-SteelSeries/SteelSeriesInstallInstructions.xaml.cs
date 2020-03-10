@@ -5,22 +5,19 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Aurora.Devices.Corsair
+namespace Device_SteelSeries
 {
-    /// <summary>
-    /// Interaction logic for CorsairInstallInstructions.xaml
-    /// </summary>
-    public partial class CorsairInstallInstructions : Window
+    public partial class SteelSeriesInstallInstructions : Window
     {
         private Tuple<Bitmap, string>[] steps = {
-            new Tuple<Bitmap, string>(new Bitmap(Properties.Resources.CorsairInstall_Step1), "Open your Corsair Utility Engine by either launching it, or clicking the CUE icon in your tray. Then go into the settings tab."),
-            new Tuple<Bitmap, string>(new Bitmap(Properties.Resources.CorsairInstall_Step2), "Under Program tab, make sure that the \"Enable SDK\" is checked. You can close CUE now."),
+            new Tuple<Bitmap, string>(new Bitmap(Properties.Resources.SteelSeriesInstall_Step1), "Open your SteelSeries Engine 3 Client by either launching it, or clicking the SteelSeries icon in your tray. Then goto the Engine Apps tab."),
+            new Tuple<Bitmap, string>(new Bitmap(Properties.Resources.SteelSeriesInstall_Step2), "Under Engine Apps tab, disable \"CS:GO\" and \"Dota 2\". You can close the SSE3 window now."),
         };
 
         private int currentStep = 0;
 
 
-        public CorsairInstallInstructions()
+        public SteelSeriesInstallInstructions()
         {
             InitializeComponent();
 
@@ -50,6 +47,7 @@ namespace Aurora.Devices.Corsair
             System.Windows.Media.Color disabled_color = System.Windows.Media.Color.FromArgb(255, 125, 125, 125);
             step1_text.Foreground = new SolidColorBrush(disabled_color);
             step2_text.Foreground = new SolidColorBrush(disabled_color);
+
 
             switch (currentStep)
             {

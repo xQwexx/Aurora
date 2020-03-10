@@ -21,17 +21,21 @@ namespace Device_YeeLight
 
         protected override bool InitializeImpl()
         {
-            devices.Add(new YeeLightDevice());
+            devices.Add(new Device_YeeLight.YeeLightDevice());
             return true;
         }
 
         protected override void ShutdownImpl()
         {
         }
+        protected override void RegisterVariables(VariableRegistry local)
+        {
+            local.Register($"{ConnectorName}_IP", "0.0.0.0", "YeeLight IP");
+        }
     }
-    public class YeeLightDevice : AuroraDevice
+    class YeeLightDevice : AuroraDevice
     {
-        private YeeLightAPI.YeeLightDevice light = new YeeLightAPI.YeeLightDevice();
+        private YeeLightAPI.YeeLight light = new YeeLightAPI.YeeLight();
 
         private const int lightListenPort = 55443; // The YeeLight smart bulb listens for commands on this port
 
@@ -53,8 +57,9 @@ namespace Device_YeeLight
 
         protected override bool ConnectImpl()
         {
+            
             IPAddress lightIP = IPAddress.Parse(GlobalVarRegistry.GetVariable<string>($"{DeviceName}_IP"));
-            if (!light.IsConnected())
+            if (!light.isConnected())
             {
                 IPAddress localIP;
                 int localListenPort = GetFreeTCPPort(); // This can be any port
@@ -64,10 +69,7 @@ namespace Device_YeeLight
                     socket.Connect(lightIP, lightListenPort);
                     localIP = ((IPEndPoint)socket.LocalEndPoint).Address;
                 }
-                light.SetLightIPAddressAndPort(lightIP, lightListenPort);
-                light.Connect();
-                light.SetMusicMode(localIP, (ushort)localListenPort, true);
-                return true;
+                return light.Connect(lightIP, lightListenPort) && light.SetMusicMode(localIP, (ushort)localListenPort);
             }
             return false;
         }
@@ -81,7 +83,6 @@ namespace Device_YeeLight
         {
             local.Register($"{DeviceName}_devicekey", DeviceKeys.Peripheral, "Key to Use", DeviceKeys.MOUSEPADLIGHT15, DeviceKeys.Peripheral);
             local.Register($"{DeviceName}_send_delay", 100, "Send delay (ms)");
-            local.Register($"{DeviceName}_IP", "0.0.0.0", "YeeLight IP");
         }
 
 

@@ -31,29 +31,21 @@ namespace Device_Razer
             TryToAddDevice(Chroma.Instance.ChromaLink, AuroraDeviceType.Unkown);
 
 
-            if (devices.Count == 0)
+
+            /*if (Chroma.Instance.Query(Corale.Colore.Razer.Devices.BladeStealth).Connected || Chroma.Instance.Query(Corale.Colore.Razer.Devices.Blade14).Connected)
+                bladeLayout = true;*/
+
+
+
+            return true;
+        }
+        protected override void RunFirstTime()
+        {
+            Aurora.App.Current.Dispatcher.Invoke(() =>
             {
-                return false;
-            }
-            else
-            {
-
-                /*if (Chroma.Instance.Query(Corale.Colore.Razer.Devices.BladeStealth).Connected || Chroma.Instance.Query(Corale.Colore.Razer.Devices.Blade14).Connected)
-                    bladeLayout = true;*/
-
-               if (Aurora.Global.Configuration.razer_first_time)
-                {
-                    Aurora.App.Current.Dispatcher.Invoke(() =>
-                    {
-                        Aurora.Devices.Razer.RazerInstallInstructions instructions = new Aurora.Devices.Razer.RazerInstallInstructions();
-                        instructions.ShowDialog();
-                    });
-                    Aurora.Global.Configuration.razer_first_time = false;
-                    Aurora.Settings.ConfigManager.Save(Aurora.Global.Configuration);
-                }
-
-                return true;
-            }
+                RazerInstallInstructions instructions = new RazerInstallInstructions();
+                instructions.ShowDialog();
+            });
         }
         private void TryToAddDevice(Corale.Colore.Core.IDevice device, AuroraDeviceType deviceType)
         {

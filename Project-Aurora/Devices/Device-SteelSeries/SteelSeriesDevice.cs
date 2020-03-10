@@ -29,18 +29,16 @@ namespace Device_SteelSeries
 
         protected override bool InitializeImpl()
         {
-            if (Aurora.Global.Configuration.steelseries_first_time)
-            {
-                Aurora.App.Current.Dispatcher.Invoke(() =>
-                {
-                    Aurora.Devices.SteelSeries.SteelSeriesInstallInstructions instructions = new Aurora.Devices.SteelSeries.SteelSeriesInstallInstructions();
-                    instructions.ShowDialog();
-                });
-                Aurora.Global.Configuration.steelseries_first_time = false;
-                Aurora.Settings.ConfigManager.Save(Aurora.Global.Configuration);
-            }
             devices.Add(new SteelSeriesDevice());
             return true;
+        }
+        protected override void RunFirstTime()
+        {
+            Aurora.App.Current.Dispatcher.Invoke(() =>
+            {
+                SteelSeriesInstallInstructions instructions = new SteelSeriesInstallInstructions();
+                instructions.ShowDialog();
+            });
         }
 
         protected override void ShutdownImpl()
@@ -50,9 +48,6 @@ namespace Device_SteelSeries
     class SteelSeriesDevice : AuroraDevice
     {
         private GameSenseSDK gameSenseSDK = new GameSenseSDK();
-
-        private bool keyboard_updated = false;
-        private bool peripheral_updated = false;
 
         private Stopwatch keepaliveTimer = new Stopwatch();
 
@@ -93,11 +88,6 @@ namespace Device_SteelSeries
                     }
 
                     previous_peripheral_Color = color;
-                    peripheral_updated = true;
-                }
-                else
-                {
-                    peripheral_updated = false;
                 }
             }
         }
@@ -124,11 +114,6 @@ namespace Device_SteelSeries
                     GameSenseSDK.setHeadsetColor(color.R, color.G, color.B);
                 }*/
 
-                peripheral_updated = true;
-            }
-            else
-            {
-                peripheral_updated = false;
             }
         }
 
@@ -140,11 +125,6 @@ namespace Device_SteelSeries
                 {
                     gameSenseSDK.setKeyboardColors(hids, colors, payload);
                 }
-                keyboard_updated = true;
-            }
-            else
-            {
-                keyboard_updated = false;
             }
         }
 

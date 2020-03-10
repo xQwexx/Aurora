@@ -37,6 +37,14 @@ namespace Device_Logitech
             LogError("Failed to Initialize Logitech!");
             return false;
         }
+        protected override void RunFirstTime()
+        {
+            Aurora.App.Current.Dispatcher.Invoke(() =>
+            {
+                LogitechInstallInstructions instructions = new LogitechInstallInstructions();
+                instructions.ShowDialog();
+            });
+        }
 
         protected override void ShutdownImpl()
         {

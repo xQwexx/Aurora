@@ -38,6 +38,14 @@ namespace Device_Corsair
             return devices.Any();
         }
 
+        protected override void RunFirstTime()
+        {
+            Aurora.App.Current.Dispatcher.Invoke(() =>
+            {
+                CorsairInstallInstructions instructions = new CorsairInstallInstructions();
+                instructions.ShowDialog();
+            });
+        }
         protected override void ShutdownImpl()
         {
             deviceInfos.Clear();

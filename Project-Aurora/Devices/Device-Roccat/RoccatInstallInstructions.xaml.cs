@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Aurora.Devices.Roccat
+namespace Device_Roccat
 {
     /// <summary>
     /// Interaction logic for RoccatInstallInstructions.xaml
