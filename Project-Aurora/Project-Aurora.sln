@@ -74,6 +74,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Device-Creative", "Devices\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Device-LightFX", "Devices\Device-LightFX\Device-LightFX.csproj", "{9D4C8670-C706-40FA-9BA1-FEF1967F3202}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Device-Ducky", "Devices\Device-Ducky\Device-Ducky.csproj", "{B862B5AE-4869-4D89-82F1-C7CC29C87098}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -308,6 +310,14 @@ Global
 		{9D4C8670-C706-40FA-9BA1-FEF1967F3202}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9D4C8670-C706-40FA-9BA1-FEF1967F3202}.Release|x64.ActiveCfg = Release|Any CPU
 		{9D4C8670-C706-40FA-9BA1-FEF1967F3202}.Release|x64.Build.0 = Release|Any CPU
+		{B862B5AE-4869-4D89-82F1-C7CC29C87098}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B862B5AE-4869-4D89-82F1-C7CC29C87098}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B862B5AE-4869-4D89-82F1-C7CC29C87098}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B862B5AE-4869-4D89-82F1-C7CC29C87098}.Debug|x64.Build.0 = Debug|Any CPU
+		{B862B5AE-4869-4D89-82F1-C7CC29C87098}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B862B5AE-4869-4D89-82F1-C7CC29C87098}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B862B5AE-4869-4D89-82F1-C7CC29C87098}.Release|x64.ActiveCfg = Release|Any CPU
+		{B862B5AE-4869-4D89-82F1-C7CC29C87098}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -332,6 +342,7 @@ Global
 		{0779FA2E-0CB5-40B3-9AFF-498E29D267CE} = {7956DBBB-678F-4981-AFF5-013929FDB5B1}
 		{192C742C-01E9-4125-862A-1621B709FDBE} = {7956DBBB-678F-4981-AFF5-013929FDB5B1}
 		{9D4C8670-C706-40FA-9BA1-FEF1967F3202} = {7956DBBB-678F-4981-AFF5-013929FDB5B1}
+		{B862B5AE-4869-4D89-82F1-C7CC29C87098} = {7956DBBB-678F-4981-AFF5-013929FDB5B1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {490F6EB6-991A-412C-B8F2-336A989F162A}

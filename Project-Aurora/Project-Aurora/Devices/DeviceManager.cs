@@ -54,7 +54,6 @@ namespace Aurora.Devices
 
         public DeviceManager()
         {
-
             string devices_scripts_path = System.IO.Path.Combine(Global.ExecutingDirectory, "Scripts", "Devices");
 
             if (Directory.Exists(devices_scripts_path))
