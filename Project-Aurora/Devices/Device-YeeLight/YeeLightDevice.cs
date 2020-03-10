@@ -31,7 +31,7 @@ namespace Device_YeeLight
     }
     public class YeeLightDevice : AuroraDevice
     {
-        private YeeLightAPI.YeeLight light = new YeeLightAPI.YeeLight();
+        private YeeLightAPI.YeeLightDevice light = new YeeLightAPI.YeeLightDevice();
 
         private const int lightListenPort = 55443; // The YeeLight smart bulb listens for commands on this port
 
@@ -54,7 +54,7 @@ namespace Device_YeeLight
         protected override bool ConnectImpl()
         {
             IPAddress lightIP = IPAddress.Parse(GlobalVarRegistry.GetVariable<string>($"{DeviceName}_IP"));
-            if (!light.isConnected())
+            if (!light.IsConnected())
             {
                 IPAddress localIP;
                 int localListenPort = GetFreeTCPPort(); // This can be any port
@@ -64,8 +64,10 @@ namespace Device_YeeLight
                     socket.Connect(lightIP, lightListenPort);
                     localIP = ((IPEndPoint)socket.LocalEndPoint).Address;
                 }
-
-                return light.Connect(lightIP, lightListenPort) && light.SetMusicMode(localIP, localListenPort);
+                light.SetLightIPAddressAndPort(lightIP, lightListenPort);
+                light.Connect();
+                light.SetMusicMode(localIP, (ushort)localListenPort, true);
+                return true;
             }
             return false;
         }
