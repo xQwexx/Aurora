@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="HidLibrary, Version=3.3.24.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\hidlibrary.3.3.24\lib\net45\HidLibrary.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
@@ -46,6 +47,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="Theraot.Core, Version=1.0.3.0, Culture=neutral, PublicKeyToken=b1460dff8a28f7a7, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Theraot.Core.1.0.3\lib\NET45\Theraot.Core.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -61,9 +63,6 @@
       <Name>Project-Aurora</Name>
       <Private>False</Private>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="hidlibrary.3.2.46.0\lib\HidLibrary.dll" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

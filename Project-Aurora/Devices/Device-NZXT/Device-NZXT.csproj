@@ -50,6 +50,7 @@
     <ProjectReference Include="..\..\..\NZXTSharp\NZXTSharp\NZXTSharp.csproj">
       <Project>{62094023-0479-4dd4-8a74-4321cc0f08dd}</Project>
       <Name>NZXTSharp</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\Project-Aurora\Project-Aurora.csproj">
       <Project>{18d2d471-3f57-4ece-9c62-836a801473d8}</Project>
