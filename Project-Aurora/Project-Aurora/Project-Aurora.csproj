@@ -76,9 +76,6 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Corale.Colore, Version=5.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Colore.5.2.0\lib\net35\Corale.Colore.dll</HintPath>
-    </Reference>
     <Reference Include="CSScriptLibrary, Version=3.28.4.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033, processorArchitecture=MSIL">
       <HintPath>..\packages\CS-Script.bin.3.28.4.0\lib\net46\CSScriptLibrary.dll</HintPath>
     </Reference>
@@ -320,9 +317,6 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Vulcan.NET, Version=1.1.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Vulcan.NET.1.1.3\lib\netstandard2.0\Vulcan.NET.dll</HintPath>
-    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="WPFToolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Infragistics.Themes.MetroDark.Wpf.1.0.0\lib\net40\WPFToolkit.dll</HintPath>
@@ -499,8 +493,6 @@
     <Compile Include="Devices\Razer\RazerInstallInstructions.xaml.cs">
       <DependentUpon>RazerInstallInstructions.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Devices\Razer\RazerDevice.cs" />
-    <Compile Include="Devices\Razer\RazerLayoutMap.cs" />
     <Compile Include="Devices\RGBNet\AbstractRGBNetDevice.cs" />
     <Compile Include="Devices\RGBNet\AuroraRGBNetBrush.cs" />
     <Compile Include="Devices\Roccat\RoccatDevice.cs" />
