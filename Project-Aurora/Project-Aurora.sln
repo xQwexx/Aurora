@@ -54,6 +54,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Device-CoolerMaster", "Devi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Device-Razer", "Devices\Device-Razer\Device-Razer.csproj", "{864A8D28-ED04-4274-B4F6-8A8974F05A12}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Device-Steelseries", "Devices\Device-Steelseries\Device-Steelseries.csproj", "{CBF7BC9C-DC9F-47EF-89BD-7AEFDDCA6C4E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -208,6 +210,14 @@ Global
 		{864A8D28-ED04-4274-B4F6-8A8974F05A12}.Release|Any CPU.Build.0 = Release|Any CPU
 		{864A8D28-ED04-4274-B4F6-8A8974F05A12}.Release|x64.ActiveCfg = Release|Any CPU
 		{864A8D28-ED04-4274-B4F6-8A8974F05A12}.Release|x64.Build.0 = Release|Any CPU
+		{CBF7BC9C-DC9F-47EF-89BD-7AEFDDCA6C4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBF7BC9C-DC9F-47EF-89BD-7AEFDDCA6C4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBF7BC9C-DC9F-47EF-89BD-7AEFDDCA6C4E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CBF7BC9C-DC9F-47EF-89BD-7AEFDDCA6C4E}.Debug|x64.Build.0 = Debug|Any CPU
+		{CBF7BC9C-DC9F-47EF-89BD-7AEFDDCA6C4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBF7BC9C-DC9F-47EF-89BD-7AEFDDCA6C4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBF7BC9C-DC9F-47EF-89BD-7AEFDDCA6C4E}.Release|x64.ActiveCfg = Release|Any CPU
+		{CBF7BC9C-DC9F-47EF-89BD-7AEFDDCA6C4E}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -222,6 +232,7 @@ Global
 		{664D2805-A9DC-4F8A-95E3-549F7764D915} = {7956DBBB-678F-4981-AFF5-013929FDB5B1}
 		{B1019E06-112E-4BE0-924C-F2E06375C4E4} = {7956DBBB-678F-4981-AFF5-013929FDB5B1}
 		{864A8D28-ED04-4274-B4F6-8A8974F05A12} = {7956DBBB-678F-4981-AFF5-013929FDB5B1}
+		{CBF7BC9C-DC9F-47EF-89BD-7AEFDDCA6C4E} = {7956DBBB-678F-4981-AFF5-013929FDB5B1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {490F6EB6-991A-412C-B8F2-336A989F162A}
