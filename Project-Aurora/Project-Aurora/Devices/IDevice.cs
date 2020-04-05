@@ -1427,11 +1427,11 @@ namespace Aurora.Devices
 
         private VariableRegistry variableRegistry;
 
-        protected void LogInfo(string s) => Global.logger.Info(s);
+        protected void LogInfo(string s) => Global.logger.Info($"[{DeviceName}] {s}");
 
-        protected void LogError(string s) => Global.logger.Error(s);
+        protected void LogError(string s) => Global.logger.Error($"[{DeviceName}] {s}");
 
-        protected Color CorrectAlpha(Color clr) => Color.FromArgb(255, Utils.ColorUtils.MultiplyColorByScalar(clr, clr.A / 255.0D));
+        protected static Color CorrectAlpha(Color clr) => Color.FromArgb(255, Utils.ColorUtils.MultiplyColorByScalar(clr, clr.A / 255.0D));
 
         protected VariableRegistry GlobalVarRegistry => Global.Configuration.VarRegistry;
 
