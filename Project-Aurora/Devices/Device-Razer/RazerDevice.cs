@@ -566,5 +566,4 @@ namespace Device_Razer
 
         }
     }
-
 }
