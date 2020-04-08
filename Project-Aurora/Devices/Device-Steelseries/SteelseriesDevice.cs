@@ -56,7 +56,7 @@ namespace Device_SteelSeries
                 }
                 catch (Exception e)
                 {
-                    Global.logger.Error("SteelSeries SDK could not be initialized: " + e);
+                    LogError(e, "SteelSeries SDK could not be initialized.");
                     return false;
                 }
             }

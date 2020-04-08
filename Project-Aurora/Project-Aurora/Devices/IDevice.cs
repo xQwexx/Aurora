@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -1430,6 +1431,8 @@ namespace Aurora.Devices
         protected void LogInfo(string s) => Global.logger.Info(s);
 
         protected void LogError(string s) => Global.logger.Error(s);
+
+        protected void LogError(Exception e, string s) => Global.logger.Error(e, s);
 
         protected Color CorrectAlpha(Color clr) => Color.FromArgb(255, Utils.ColorUtils.MultiplyColorByScalar(clr, clr.A / 255.0D));
 

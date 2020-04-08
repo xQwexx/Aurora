@@ -44,7 +44,7 @@ namespace Device_SteelSeries
             }
             catch (Exception e)
             {
-                Global.logger.Error(e,"SteelSeries Lisp Code failed.");
+                LogError(e,"SteelSeries Lisp Code failed.");
                 throw;
             }
         }
@@ -65,7 +65,7 @@ namespace Device_SteelSeries
             }
             catch (Exception e)
             {
-                Global.logger.Error(e, "SteelSeries Core Props Load failed.");
+                LogError(e, "SteelSeries Core Props Load failed.");
             }
         }
 
@@ -158,7 +158,7 @@ namespace Device_SteelSeries
                 }
                 catch (Exception e)
                 {
-                    Global.logger.Error(e, "Error while sending heartbeat to SteelSeries Engine trying to restart.");
+                    LogError(e, "Error while sending heartbeat to SteelSeries Engine trying to restart.");
                     //To stop all other events from erroring and try and reboot steelseries engine
                     Reset();
                 }
