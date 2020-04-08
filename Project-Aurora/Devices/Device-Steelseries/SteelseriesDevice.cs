@@ -114,9 +114,9 @@ namespace Device_SteelSeries
             {
                 if (!keyColors.ContainsKey(DeviceKeys.Peripheral))
                 {
-                    var mousePad = keyColors.Where(t => t.Key >= DeviceKeys.SSMPL1 && t.Key <= DeviceKeys.SSMPL12).Select(t => t.Value).ToArray();
+                    var mousePad = keyColors.Where(t => t.Key >= DeviceKeys.MOUSEPADLIGHT1 && t.Key <= DeviceKeys.MOUSEPADLIGHT12).Select(t => t.Value).ToArray();
                     var mouse = new List<Color> { keyColors[DeviceKeys.Peripheral_Logo], keyColors[DeviceKeys.Peripheral_ScrollWheel]};
-                    mouse.AddRange(keyColors.Where(t => t.Key <= DeviceKeys.MOUSELIGHT1 && t.Key >= DeviceKeys.MOUSELIGHT6).Select(t => t.Value));
+                    //mouse.AddRange(keyColors.Where(t => t.Key <= DeviceKeys.MOUSELIGHT1 && t.Key >= DeviceKeys.MOUSELIGHT6).Select(t => t.Value));
                     setOneZone(keyColors[DeviceKeys.Peripheral_Logo]);
                     if (mouse.Count <= 1)
                         setMouse(keyColors[DeviceKeys.Peripheral_Logo]);
@@ -131,8 +131,8 @@ namespace Device_SteelSeries
                         setTwoZone(mousePad);
                     else
                         setTwelveZone(mousePad);
-                    if (keyColors.Count(t => t.Key >= DeviceKeys.MONITORLIGHT1 && t.Key <= DeviceKeys.MONITORLIGHT103) == 103)
-                        setHundredThreeZone(keyColors.Where(t => t.Key >= DeviceKeys.MONITORLIGHT1 && t.Key <= DeviceKeys.MONITORLIGHT103).Select(t => t.Value).ToArray());
+                    //if (keyColors.Count(t => t.Key >= DeviceKeys.MONITORLIGHT1 && t.Key <= DeviceKeys.MONITORLIGHT103) == 103)
+                    //    setHundredThreeZone(keyColors.Where(t => t.Key >= DeviceKeys.MONITORLIGHT1 && t.Key <= DeviceKeys.MONITORLIGHT103).Select(t => t.Value).ToArray());
                 }
                 else
                     setGeneric(keyColors[DeviceKeys.Peripheral]);
