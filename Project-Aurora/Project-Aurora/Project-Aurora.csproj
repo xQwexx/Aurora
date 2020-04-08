@@ -503,8 +503,6 @@
     <Compile Include="Devices\UnifiedHID\AsusPugio.cs" />
     <Compile Include="Devices\UnifiedHID\RivalMouses.cs" />
     <Compile Include="Devices\UnifiedHID\UnifiedHID.cs" />
-    <Compile Include="Devices\SteelSeries\GameSenseSDK.cs" />
-    <Compile Include="Devices\SteelSeries\SteelSeriesDevice.cs" />
     <Compile Include="Devices\SteelSeries\SteelSeriesInstallInstructions.xaml.cs">
       <DependentUpon>SteelSeriesInstallInstructions.xaml</DependentUpon>
     </Compile>
@@ -1100,7 +1098,6 @@
     </Compile>
     <Compile Include="Settings\ObjectSettings.cs" />
     <Compile Include="Settings\PluginManager.cs" />
-    <Compile Include="Devices\SteelSeries\USBHIDCodes.cs" />
     <Compile Include="Utils\JSONUtils.cs" />
     <Compile Include="Utils\MouseUtils.cs" />
     <Compile Include="Utils\HardwareMonitor.cs" />
