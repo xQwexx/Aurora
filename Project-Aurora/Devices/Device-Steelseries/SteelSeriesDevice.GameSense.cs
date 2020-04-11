@@ -19,9 +19,7 @@ namespace Device_SteelSeries
         private HttpClient client;
         private JObject baseObject = new JObject();
         private JObject baseColorObject = new JObject {{"Event", "AURORA"}, {"data", new JObject()}};
-        private Task pingTask;
         private CancellationTokenSource pingTaskTokenSource = new CancellationTokenSource();
-        private bool loadedLisp;
         private JObject dataColorObject => (JObject)baseColorObject["data"];
 
         private void sendLispCode()
@@ -39,8 +37,8 @@ namespace Device_SteelSeries
                     core.Add("golisp", reader.ReadToEnd());
                 }
                 sendJson("/load_golisp_handlers", core);
-                pingTask = Task.Run(async () => await sendPing(pingTaskTokenSource.Token), pingTaskTokenSource.Token);
-                loadedLisp = true;
+                var _ = Task.Run(async () => await sendPing(pingTaskTokenSource.Token), pingTaskTokenSource.Token);
+                isInitialized = true;
             }
             catch (Exception e)
             {

@@ -17,7 +17,6 @@ namespace Device_SteelSeries
 {
     public partial class SteelSeriesDevice : Device
     {
-        TimeSpan updateTime = TimeSpan.Zero;
         object lock_obj = new object();
 
         public override VariableRegistry GetRegisteredVariables()
@@ -28,16 +27,6 @@ namespace Device_SteelSeries
         protected override string DeviceName => "SteelSeries";
 
         public override string GetDeviceDetails() => IsInitialized() ? DeviceName + ": Connected" : DeviceName + ": Not initialized";
-
-        public override string GetDeviceUpdatePerformance()
-        {
-            return (IsInitialized() ? getDeviceUpdateTime() + " ms" : "");
-        }
-
-        private string getDeviceUpdateTime()
-        {
-            return updateTime.TotalMilliseconds > 1000 ? "Restart SteelSeries Engine it has not responded for over 1000" : ((int)updateTime.TotalMilliseconds).ToString();
-        }
 
         public override bool Initialize()
         {
@@ -68,7 +57,7 @@ namespace Device_SteelSeries
             {
                 pingTaskTokenSource.Cancel();
                 client?.Dispose();
-                loadedLisp = false;
+                isInitialized = false;
             }
         }
 
@@ -83,32 +72,8 @@ namespace Device_SteelSeries
             Initialize();
         }
 
-        public override bool Reconnect() => true;
-
-        public override bool IsInitialized() => loadedLisp;
-
-        public override bool IsConnected() => loadedLisp;
-
-        public override bool IsKeyboardConnected() => IsConnected();
-
-        public override bool IsPeripheralConnected() => IsConnected();
-
         public override bool UpdateDevice(Dictionary<DeviceKeys, Color> keyColors, DoWorkEventArgs e, bool forced = false)
         {
-            foreach (var (key, color) in keyColors)
-            {
-                if (TryGetHid(key, out var hid))
-                {
-                    setKeyboardLed(hid, color);
-                }
-            }
-            return true;
-        }
-
-        public override bool UpdateDevice(DeviceColorComposition colorComposition, DoWorkEventArgs e, bool forced = false)
-        {
-            var tmpTime = DateTime.Now;
-            var keyColors = colorComposition.keyColors.ToDictionary(t => t.Key, t => ColorUtils.MultiplyColorByScalar(t.Value, t.Value.A / 255D));
             dataColorObject.RemoveAll();
             if (!Global.Configuration.devices_disable_mouse || !Global.Configuration.devices_disable_headset)
             {
@@ -139,10 +104,15 @@ namespace Device_SteelSeries
             }
             if (!Global.Configuration.devices_disable_keyboard)
             {
-                UpdateDevice(keyColors, e, forced);
+                foreach (var (key, color) in keyColors)
+                {
+                    if (TryGetHid(key, out var hid))
+                    {
+                        setKeyboardLed(hid, color);
+                    }
+                }
             }
             sendLighting();
-            updateTime = DateTime.Now - tmpTime;
             return true;
         }
     }
