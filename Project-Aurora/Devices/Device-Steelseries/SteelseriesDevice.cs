@@ -17,16 +17,9 @@ namespace Device_SteelSeries
 {
     public partial class SteelSeriesDevice : Device
     {
-        object lock_obj = new object();
-
-        public override VariableRegistry GetRegisteredVariables()
-        {
-            return new VariableRegistry();
-        }
-
         protected override string DeviceName => "SteelSeries";
 
-        public override string GetDeviceDetails() => IsInitialized() ? DeviceName + ": Connected" : DeviceName + ": Not initialized";
+        object lock_obj = new object();
 
         public override bool Initialize()
         {
