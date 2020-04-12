@@ -14,6 +14,24 @@ using Newtonsoft.Json.Linq;
 
 namespace Device_SteelSeries
 {
+    public enum SteelSeriesZone
+    {
+        onezone,
+        twozone,
+        threezone,
+        fourzone,
+        fivezone,
+        eightzone,
+        twelvezone,
+        seventeenzone,
+        twentyfourzone,
+        hundredthreezone,
+        logo,
+        wheel,
+        mouse,
+        periph
+    }
+
     public partial class SteelSeriesDevice
     {
         private HttpClient client;
@@ -75,74 +93,14 @@ namespace Device_SteelSeries
             ((JArray) dataColorObject["keyboard"]["colors"]).Add(new JArray{color.R, color.G, color.B});
         }
 
-        private void setOneZone(Color color)
+        private void SetZone(Color color, SteelSeriesZone zone)
         {
-            dataColorObject.Add("onezone", new JObject{{"color",new JArray {color.R, color.G, color.B}}});
+            dataColorObject.Add(zone.ToString(), new JObject { { "color", new JArray { color.R, color.G, color.B } } });
         }
 
-        private void setTwoZone(Color[] colors)
+        private void SetZones(Color[] colors, SteelSeriesZone zone)
         {
-            dataColorObject.Add("twozone", new JObject{{"colors", colorToJson(colors)}});
-        }
-
-        private void setThreeZone(Color[] colors)
-        {
-            dataColorObject.Add("threezone", new JObject{{"colors", colorToJson(colors)}});
-        }
-
-        private void setFourZone(Color[] colors)
-        {
-            dataColorObject.Add("fourzone", new JObject{{"colors", colorToJson(colors)}});
-        }
-
-        private void setFiveZone(Color[] colors)
-        {
-            dataColorObject.Add("fivezone", new JObject{{"colors", colorToJson(colors)}});
-        }
-
-        private void setEightZone(Color[] colors)
-        {
-            dataColorObject.Add("eightzone", new JObject{{"colors", colorToJson(colors)}});
-        }
-
-        private void setTwelveZone(Color[] colors)
-        {
-            dataColorObject.Add("twelvezone", new JObject{{"colors", colorToJson(colors)}});
-        }
-
-        private void setSeventeenZone(Color[] colors)
-        {
-            dataColorObject.Add("seventeenzone", new JObject{{"colors", colorToJson(colors)}});
-        }
-
-        private void setTwentyFourZone(Color[] colors)
-        {
-            dataColorObject.Add("twentyfourzone", new JObject{{"colors", colorToJson(colors)}});
-        }
-
-        private void setHundredThreeZone(Color[] colors)
-        {
-            dataColorObject.Add("hundredthreezone", new JObject{{"colors", colorToJson(colors)}});
-        }
-
-        private void setLogo(Color color)
-        {
-            dataColorObject.Add("logo", new JObject{{"color",new JArray {color.R, color.G, color.B}}});
-        }
-
-        private void setWheel(Color color)
-        {
-            dataColorObject.Add("wheel", new JObject{{"color",new JArray {color.R, color.G, color.B}}});
-        }
-
-        private void setMouse(Color color)
-        {
-            dataColorObject.Add("mouse", new JObject{{"color",new JArray {color.R, color.G, color.B}}});
-        }
-
-        private void setGeneric(Color color)
-        {
-            dataColorObject.Add("periph", new JObject{{"color",new JArray {color.R, color.G, color.B}}});
+            dataColorObject.Add(zone.ToString(), new JObject { { "colors", colorToJson(colors) } });
         }
 
         private async Task sendPing(CancellationToken token)
