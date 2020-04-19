@@ -11,7 +11,6 @@ using MouseCustom = Corale.Colore.Razer.Mouse.Effects.CustomGrid;
 using HeadsetStatic = Corale.Colore.Razer.Headset.Effects.Static;
 using KeypadCustom = Corale.Colore.Razer.Keypad.Effects.Custom;
 using ChromaLinkCustom = Corale.Colore.Razer.ChromaLink.Effects.Custom;
-using System.Threading;
 
 namespace Device_Razer
 {
@@ -32,16 +31,28 @@ namespace Device_Razer
         {
             if (!Chroma.SdkAvailable)
             {
-                LogError("SDK not available. Install Raze synapse");
+                LogError("SDK not available. Install Razer synapse");
                 return isInitialized = false;
             }
-            Chroma.Instance.Initialize();
+
+            try
+            {
+                Chroma.Instance.Initialize();
+            }
+            catch (Corale.Colore.Razer.NativeCallException e)
+            {
+                LogError("Error initializing:" + e.Message);
+                return isInitialized = false;
+            }
+
             if(!Chroma.Instance.Initialized)
             {
                 LogError("Failed to Initialize Razer Chroma sdk");
                 return isInitialized = false;
             }
+
             DetectDevices();
+
             return isInitialized = true;
         }
 
