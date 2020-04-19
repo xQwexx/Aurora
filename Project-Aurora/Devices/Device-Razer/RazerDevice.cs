@@ -41,7 +41,7 @@ namespace Device_Razer
                 LogError("Failed to Initialize Razer Chroma sdk");
                 return isInitialized = false;
             }
-            //DetectDevices();
+            DetectDevices();
             return isInitialized = true;
         }
 
@@ -131,7 +131,7 @@ namespace Device_Razer
                 }
                 catch (Corale.Colore.Razer.NativeCallException e)
                 {
-                    LogError("Error querying device: " + e);
+                    LogError("Error querying device: " + e.Message);
                 }
             }
         }

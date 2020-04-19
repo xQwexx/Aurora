@@ -248,7 +248,7 @@ namespace Aurora.Devices
                 else
                     devicesToRetryNo++;
 
-                Global.logger.Info("Device, " + device.Device.GetDeviceName() + ", was" + (device.Device.IsInitialized() ? "" : " not") + " initialized");
+                Global.logger.Info($"[{device.Device.GetDeviceName()}] {(device.Device.IsInitialized() ? "Initialized successfully." : "Failed to initialize.")}");
             }
 
 
@@ -289,7 +289,7 @@ namespace Aurora.Devices
                     if (device.Device.Initialize())
                         _anyInitialized = true;
 
-                    Global.logger.Info("Device, " + device.Device.GetDeviceName() + ", was" + (device.Device.IsInitialized() ? "" : " not") + " initialized");
+                    LogInitialization(device.Device);
                 }
 
                 retryAttemptsLeft--;
@@ -327,7 +327,7 @@ namespace Aurora.Devices
                 if (device.Device.IsInitialized())
                 {
                     device.Device.Shutdown();
-                    Global.logger.Info("Device, " + device.Device.GetDeviceName() + ", was shutdown");
+                    Global.logger.Info($"[{device.Device.GetDeviceName()}] Shutdown.");
                 }
             }
 
@@ -374,6 +374,11 @@ namespace Aurora.Devices
                 devices_info += "Retries: " + retryAttemptsLeft + "\r\n";
 
             return devices_info;
+        }
+
+        private void LogInitialization(IDevice dev)
+        {
+            Global.logger.Info($"[{dev.GetDeviceName()}] {(dev.IsInitialized() ? "Initialized successfully." : "Failed to initialize.")}");
         }
 
         #region IDisposable Support
