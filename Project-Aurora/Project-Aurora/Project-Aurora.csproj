@@ -475,7 +475,6 @@
     </Compile>
     <Compile Include="Devices\Asus\AsusDevice.cs" />
     <Compile Include="Devices\Asus\AsusRGBNetBrush.cs" />
-    <Compile Include="Devices\NZXT\NZXTDevice.cs" />
     <Compile Include="Controls\ReorderableListBox.cs" />
     <Compile Include="Devices\AtmoOrb\AtmoOrbDevice.cs" />
     <Compile Include="Devices\Clevo\ClevoSetKBLED.cs" />
@@ -489,7 +488,6 @@
     <Compile Include="Devices\Logitech\LogitechInstallInstructions.xaml.cs">
       <DependentUpon>LogitechInstallInstructions.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Devices\NZXT\NZXTLayoutMap.cs" />
     <Compile Include="Devices\Razer\RazerInstallInstructions.xaml.cs">
       <DependentUpon>RazerInstallInstructions.xaml</DependentUpon>
     </Compile>
@@ -2611,10 +2609,6 @@
     <Content Include="Resources\RazerInstall\Step2.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\NZXTSharp\NZXTSharp\NZXTSharp.csproj">
-      <Project>{62094023-0479-4dd4-8a74-4321cc0f08dd}</Project>
-      <Name>NZXTSharp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\SBAuroraR.NET\SBAuroraReactive\SBAuroraReactive.vcxproj">
       <Project>{053a704b-5c79-4cde-b1fc-b952051acaa0}</Project>
       <Name>SBAuroraReactive</Name>

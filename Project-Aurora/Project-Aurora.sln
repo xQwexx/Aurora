@@ -32,8 +32,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin-Example", "Plugin-Ex
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SBAuroraReactive", "..\SBAuroraR.NET\SBAuroraReactive\SBAuroraReactive.vcxproj", "{053A704B-5C79-4CDE-B1FC-B952051ACAA0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NZXTSharp", "..\NZXTSharp\NZXTSharp\NZXTSharp.csproj", "{62094023-0479-4DD4-8A74-4321CC0F08DD}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Device-Example", "Devices\Device-Example\Device-Example.csproj", "{9CE5BADA-C85A-4B79-BAFA-55A1C1633612}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Device-Wooting", "Devices\Device-Wooting\Device-Wooting.csproj", "{D813363C-0569-4094-BA28-AE1603093C77}"
@@ -132,14 +130,6 @@ Global
 		{053A704B-5C79-4CDE-B1FC-B952051ACAA0}.Release|Any CPU.ActiveCfg = Release|Win32
 		{053A704B-5C79-4CDE-B1FC-B952051ACAA0}.Release|x64.ActiveCfg = Release|x64
 		{053A704B-5C79-4CDE-B1FC-B952051ACAA0}.Release|x64.Build.0 = Release|x64
-		{62094023-0479-4DD4-8A74-4321CC0F08DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{62094023-0479-4DD4-8A74-4321CC0F08DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{62094023-0479-4DD4-8A74-4321CC0F08DD}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{62094023-0479-4DD4-8A74-4321CC0F08DD}.Debug|x64.Build.0 = Debug|Any CPU
-		{62094023-0479-4DD4-8A74-4321CC0F08DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{62094023-0479-4DD4-8A74-4321CC0F08DD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{62094023-0479-4DD4-8A74-4321CC0F08DD}.Release|x64.ActiveCfg = Release|Any CPU
-		{62094023-0479-4DD4-8A74-4321CC0F08DD}.Release|x64.Build.0 = Release|Any CPU
 		{9CE5BADA-C85A-4B79-BAFA-55A1C1633612}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9CE5BADA-C85A-4B79-BAFA-55A1C1633612}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CE5BADA-C85A-4B79-BAFA-55A1C1633612}.Debug|x64.ActiveCfg = Debug|Any CPU
