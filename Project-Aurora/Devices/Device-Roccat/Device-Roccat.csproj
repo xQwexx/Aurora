@@ -36,6 +36,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
     <Reference Include="Roccat-Talk">
       <HintPath>.\Roccat-Talk.dll</HintPath>
     </Reference>
