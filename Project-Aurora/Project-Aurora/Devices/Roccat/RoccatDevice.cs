@@ -171,8 +171,6 @@ namespace Aurora.Devices.Roccat
             JP = 2
         }
 
-        private byte layout = 0x01; //TALKFX_RYOS_LAYOUT_US
-
         public string GetDeviceName()
         {
             return devicename;
