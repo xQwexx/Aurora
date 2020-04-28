@@ -251,6 +251,10 @@ namespace Aurora.Devices.UnifiedHID
             return default_registry;
         }
 
+        public System.Windows.Window GetWindow() => null;
+
+        public bool HasWindow { get; } = false;
+
     }
 
     interface ISSDevice
@@ -319,7 +323,6 @@ namespace Aurora.Devices.UnifiedHID
         {
             return false;
         }
-
     }
 
 }

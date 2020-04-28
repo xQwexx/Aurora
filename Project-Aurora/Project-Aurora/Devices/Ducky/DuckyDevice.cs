@@ -222,5 +222,10 @@ namespace Aurora.Devices.Ducky
         private int Packet(int packetNum) => packetNum * 64;
 
         private HidDevice GetDuckyKeyboard(int VID, int PID) => DeviceList.Local.GetHidDevices(VID, PID).FirstOrDefault(HidDevice => HidDevice.GetMaxInputReportLength() == 65);
+
+        public System.Windows.Window GetWindow() => null;
+
+        public bool HasWindow { get; } = false;
+
     }
 }

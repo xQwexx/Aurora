@@ -4,12 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Aurora.Controls"
-             mc:Ignorable="d" MinWidth="300" d:DesignWidth="300" Loaded="UserControl_Loaded">
-    <Grid>
-        <TextBlock x:Name="txtblk_DeviceStatus" TextWrapping="Wrap" Text="Device Status" Margin="0,0,240,0"/>
-        <TextBlock x:Name="txtblk_DevicePerformance" Margin="0,2,180,2" TextWrapping="NoWrap" Text="0 ms" VerticalAlignment="Center" HorizontalAlignment="Right" Width="55" Height="16" TextAlignment="Right"/>
-        <Button x:Name="btnToggleOnOff" Width="35" Content="Start" HorizontalAlignment="Right" Margin="0,0,140,0" VerticalAlignment="Center" Click="btnToggleOnOff_Click"/>
-        <Button x:Name="btnToggleEnableDisable" Width="55" Content="Disable" HorizontalAlignment="Right" VerticalAlignment="Center" Click="btnToggleEnableDisable_Click" Margin="0,0,80,0"/>
-        <Button x:Name="btnViewOptions" Content="View Options" HorizontalAlignment="Right" VerticalAlignment="Center" Click="btnViewOptions_Click"/>
+             mc:Ignorable="d" MinWidth="500" d:DesignWidth="500" Loaded="UserControl_Loaded">
+    <Grid Margin="0,0,0,0">
+        <TextBlock x:Name="txtblk_DeviceStatus" TextWrapping="Wrap" Text="Device Status" Margin="0,0,220,0"/>
+        <TextBlock x:Name="txtblk_DevicePerformance" Margin="0,2,230,2" TextWrapping="NoWrap" Text="0 ms" VerticalAlignment="Center" HorizontalAlignment="Right" Width="55" Height="16" TextAlignment="Right"/>
+        <Button x:Name="btnToggleOnOff" Width="35" Content="Start" HorizontalAlignment="Right" Margin="0,0,190,0" VerticalAlignment="Center" Click="btnToggleOnOff_Click"/>
+        <Button x:Name="btnToggleEnableDisable" Width="55" Content="Disable" HorizontalAlignment="Right" VerticalAlignment="Center" Click="btnToggleEnableDisable_Click" Margin="0,0,129,0"/>
+        <Button x:Name="btnViewOptions" Content="View Options" HorizontalAlignment="Right" VerticalAlignment="Center" Click="btnViewOptions_Click" Margin="0,0,50,0"/>
+        <Button x:Name="btnViewUI" Content="View UI" HorizontalAlignment="Right" VerticalAlignment="Center"  Click="btnViewUI_Click"/>
     </Grid>
 </UserControl>

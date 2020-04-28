@@ -677,5 +677,10 @@ namespace Aurora.Devices.Creative
 
             return i;
         }
+
+        public System.Windows.Window GetWindow() => null;
+
+        public bool HasWindow { get; } = false;
+
     }
 }

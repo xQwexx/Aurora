@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using Aurora.Settings;
 
 namespace Aurora.Devices
@@ -1411,6 +1412,10 @@ namespace Aurora.Devices
         /// <param name="forced">A boolean value indicating whether or not to forcefully update this device</param>
         /// <returns></returns>
         bool UpdateDevice(DeviceColorComposition colorComposition, DoWorkEventArgs e, bool forced = false);
+
+        Window GetWindow();
+
+        bool HasWindow { get; }
     }
 
     /// <summary>
@@ -1528,5 +1533,9 @@ namespace Aurora.Devices
         /// Is called every frame (30fps). Update the device here
         /// </summary>
         public abstract bool UpdateDevice(Dictionary<DeviceKeys, Color> keyColors, DoWorkEventArgs e, bool forced = false);
+
+        public virtual Window GetWindow() => null;
+
+        public virtual bool HasWindow { get; } = false;
     }
 }

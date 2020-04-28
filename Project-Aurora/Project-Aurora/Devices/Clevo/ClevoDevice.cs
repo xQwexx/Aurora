@@ -314,5 +314,10 @@ namespace Aurora.Devices.Clevo
         {
             return new VariableRegistry();
         }
+
+        public System.Windows.Window GetWindow() => null;
+
+        public bool HasWindow { get; } = false;
+
     }
 }

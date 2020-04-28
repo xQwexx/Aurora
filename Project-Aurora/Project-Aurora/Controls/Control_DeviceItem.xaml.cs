@@ -122,6 +122,9 @@ namespace Aurora.Controls
 
             if(Device.Device.GetRegisteredVariables().GetRegisteredVariableKeys().Count() == 0)
                 btnViewOptions.IsEnabled = false;
+
+            if (!Device.Device.HasWindow)
+                btnViewUI.IsEnabled = false;
         }
 
         private void btnViewOptions_Click(object sender, RoutedEventArgs e)
@@ -136,6 +139,16 @@ namespace Aurora.Controls
             };
 
             options_window.ShowDialog();
+        }
+
+        private void btnViewUI_Click(object sender, RoutedEventArgs e)
+        {
+            var window = Device.Device.GetWindow();
+
+            if (window is null)
+                return;
+
+            window.ShowDialog();
         }
     }
 }

@@ -188,5 +188,10 @@ namespace Aurora.Devices.ScriptedDevice
             else
                 return new VariableRegistry();
         }
+
+        public System.Windows.Window GetWindow() => null;
+
+        public bool HasWindow { get; } = false;
+
     }
 }

@@ -437,5 +437,10 @@ namespace Aurora.Devices.Roccat
 
             return default_registry;
         }
+
+        public System.Windows.Window GetWindow() => null;
+
+        public bool HasWindow { get; } = false;
+
     }
 }

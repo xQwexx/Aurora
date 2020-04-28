@@ -125,5 +125,10 @@ namespace Aurora.Devices.RGBNet
         public bool IsConnected() => true;
 
         #endregion
+
+        public System.Windows.Window GetWindow() => null;
+
+        public bool HasWindow { get; } = false;
+
     }
 }

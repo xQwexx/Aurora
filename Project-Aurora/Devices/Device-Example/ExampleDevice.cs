@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using Aurora.Devices;
 using Aurora.Settings;
 
@@ -36,6 +37,13 @@ namespace Device_Example
         protected override void RegisterVariables(VariableRegistry local)
         {
             local.Register($"{DeviceName}_devicekey", DeviceKeys.Peripheral, "Key to Use", DeviceKeys.MOUSEPADLIGHT15, DeviceKeys.Peripheral_Logo);
+        }
+
+        public override bool HasWindow => true;
+
+        public override Window GetWindow()
+        {
+            return new UserControl1();
         }
     }
 }
