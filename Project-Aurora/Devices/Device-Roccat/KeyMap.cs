@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
+using Aurora;
 using Aurora.Devices;
+using Aurora.Settings;
 
 namespace Device_Roccat
 {
     static class KeyMap
     {
+        //Ansi Layout? SDK Docs are mentioning Enter = 52 is DE/iso Layout
         public static Dictionary<DeviceKeys, byte> DeviceKeysMap = new Dictionary<DeviceKeys, byte>
         {
             {DeviceKeys.ESC, 0 },
@@ -118,5 +121,39 @@ namespace Device_Roccat
             {DeviceKeys.NUM_ZERO, 108 },
             {DeviceKeys.NUM_PERIOD, 109 }
         };
+
+        public static DeviceLayout GetLayout()
+        {
+            if (Global.Configuration.keyboard_localization == PreferredKeyboardLocalization.dvorak
+                || Global.Configuration.keyboard_localization == PreferredKeyboardLocalization.us
+                || Global.Configuration.keyboard_localization == PreferredKeyboardLocalization.ru)
+                return DeviceLayout.ANSI;
+            else if (Global.Configuration.keyboard_localization == PreferredKeyboardLocalization.jpn)
+                return DeviceLayout.JP;
+            else
+                return DeviceLayout.ISO;
+        }
+
+        public enum DeviceLayout : byte
+        {
+            ISO = 0,
+            ANSI = 1,
+            JP = 2
+        }
+
+        public static DeviceKeys LocalizeKey(DeviceKeys Key)
+        {
+            //Solution to slightly different mapping rather than giving a whole different dictionary
+
+            //Unclean sulution should be changed?!
+            if (GetLayout() == DeviceLayout.ISO) //Was ANSI but I am pretty sure that what a typo?
+            {
+                if (Key == DeviceKeys.ENTER)
+                    Key = DeviceKeys.BACKSLASH;
+                if (Key == DeviceKeys.HASHTAG)
+                    Key = DeviceKeys.ENTER;
+            }
+            return Key;
+        }
     }
 }
