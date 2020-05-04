@@ -104,7 +104,7 @@ namespace Device_Roccat
             local.Register($"{DeviceName}_devicekey", DeviceKeys.Peripheral_Logo, "Key to Use", DeviceKeys.MOUSEPADLIGHT15, DeviceKeys.Peripheral_Logo);
             local.Register($"{DeviceName}_restore_fallback", new RealColor(System.Drawing.Color.FromArgb(255, 0, 0, 255)), "Color", new Aurora.Utils.RealColor(System.Drawing.Color.FromArgb(255, 255, 255, 255)), new Aurora.Utils.RealColor(System.Drawing.Color.FromArgb(0, 0, 0, 0)), "Set restore color for your generic roccat devices");
             local.Register($"{DeviceName}_enable_generic", true, "Enable 1 color devices");
-            local.Register($"{DeviceName}_enable_ryos", true, "Enable per key devices");
+            local.Register($"{DeviceName}_enable_ryos", false, "Enable per key devices");
         }
 
         private static Roccat_Talk.TalkFX.Color ToRoccatColor(Color c) =>

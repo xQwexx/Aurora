@@ -145,8 +145,7 @@ namespace Device_Roccat
         {
             //Solution to slightly different mapping rather than giving a whole different dictionary
 
-            //Unclean sulution should be changed?!
-            if (GetLayout() == DeviceLayout.ISO) //Was ANSI but I am pretty sure that what a typo?
+            if (GetLayout() == DeviceLayout.ISO)
             {
                 if (Key == DeviceKeys.ENTER)
                     Key = DeviceKeys.BACKSLASH;
