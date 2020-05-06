@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,34 +11,46 @@ using Roccat_Talk.TalkFX;
 using Roccat_Talk.RyosTalkFX;
 using Aurora.Utils;
 using Color = System.Drawing.Color;
+using Aurora.Settings;
 
 namespace Device_Roccat
 {
     public class RoccatDevice : Device
     {
-        protected override string DeviceName => "Roccat";
+        protected override string DeviceName => "Roccat Talk";
+        private DeviceKeys device_key;
+        private bool enable_generic;
+        private bool enable_ryos;
         private TalkFxConnection talkFx;
         private RyosTalkFXConnection ryosTalkFx;
         private readonly byte[] stateStruct = new byte[110];
         private readonly Roccat_Talk.TalkFX.Color[] colorStruct = new Roccat_Talk.TalkFX.Color[110];
 
-
         public override bool Initialize()
         {
             if (isInitialized)
                 return true;
-            
+
+            device_key = GlobalVarRegistry.GetVariable<DeviceKeys>($"{DeviceName}_devicekey");
+            enable_generic = GlobalVarRegistry.GetVariable<bool>($"{DeviceName}_enable_generic");
+            enable_ryos = GlobalVarRegistry.GetVariable<bool>($"{DeviceName}_enable_ryos");
+
             talkFx = new TalkFxConnection();
             ryosTalkFx = new RyosTalkFXConnection();
 
+            //Will return true even when no Ryos is connected. Check if TalkFx is opened?
+            //Is even requierd for 1 color devices with the used sdk version.
             if (!ryosTalkFx.Initialize())
             {
-                LogError("Could not initialize Ryos TalkFX");
+                LogInfo("Could not initialize Ryos Talk Fx");
                 return isInitialized = false;
             }
 
+            //Will return true even when no Ryos is connected. Check if TalkFx is opened?
+            //Is even requierd for 1 color devices with the used sdk version.
             if (!ryosTalkFx.EnterSdkMode())
             {
+                LogInfo("Could not Enter Ryos SDK Mode");
                 return isInitialized = false;
             }
 
@@ -47,11 +59,16 @@ namespace Device_Roccat
 
         public override void Shutdown()
         {
-            var restore = new Roccat_Talk.TalkFX.Color(0, 0, 0);//TODO: get restore color 
+            //Shutdown 1 color devices.
+            var restoreColor = ToRoccatColor(GlobalVarRegistry.GetVariable<RealColor>($"{DeviceName}_restore_fallback"));
+            talkFx?.SetLedRgb(Zone.Event, KeyEffect.On, Speed.Fast, restoreColor); //Workaround because "RestoreLedRgb()" doesn't seam to work.
+            talkFx?.RestoreLedRgb();
+            talkFx?.Dispose();
+
+            //Shutdown per key keyboards.
             ryosTalkFx?.ExitSdkMode();
             ryosTalkFx?.Dispose();
-            talkFx?.SetLedRgb(Zone.Event, KeyEffect.On, Speed.Fast, restore);
-            talkFx?.Dispose();
+
             isInitialized = false;
         }
 
@@ -60,21 +77,39 @@ namespace Device_Roccat
             if (!isInitialized)
                 return false;
 
-            foreach(var key in keyColors)
+            if (enable_ryos)
             {
-                if (KeyMap.DeviceKeysMap.TryGetValue(key.Key, out var k))
+                foreach (var key in keyColors)
                 {
-                    colorStruct[k] = ToRoccatColor(key.Value);
-                    stateStruct[k] = IsLedOn(key.Value);
+                    if (KeyMap.DeviceKeysMap.TryGetValue(KeyMap.LocalizeKey(key.Key), out var k))
+                    {
+                        colorStruct[k] = ToRoccatColor(key.Value);
+                        stateStruct[k] = IsLedOn(key.Value);
+                    }
                 }
+                ryosTalkFx.SetMkFxKeyboardState(stateStruct, colorStruct, (byte)KeyMap.GetLayout());
             }
-            ryosTalkFx.SetMkFxKeyboardState(stateStruct, colorStruct, 0x01);
+
+            //Set 1 color devices
+            if (enable_generic && keyColors.TryGetValue(device_key, out var clr))
+            {
+                talkFx.SetLedRgb(Zone.Event, KeyEffect.On, Speed.Fast, ToRoccatColor(clr));
+            }
 
             return true;
         }
 
+        protected override void RegisterVariables(VariableRegistry local)
+        {
+            local.Register($"{DeviceName}_devicekey", DeviceKeys.Peripheral_Logo, "Key to Use", DeviceKeys.MOUSEPADLIGHT15, DeviceKeys.Peripheral_Logo);
+            local.Register($"{DeviceName}_restore_fallback", new RealColor(System.Drawing.Color.FromArgb(255, 0, 0, 255)), "Color", new Aurora.Utils.RealColor(System.Drawing.Color.FromArgb(255, 255, 255, 255)), new Aurora.Utils.RealColor(System.Drawing.Color.FromArgb(0, 0, 0, 0)), "Set restore color for your generic roccat devices");
+            local.Register($"{DeviceName}_enable_generic", true, "Enable 1 color devices");
+            local.Register($"{DeviceName}_enable_ryos", false, "Enable per key devices");
+        }
+
         private static Roccat_Talk.TalkFX.Color ToRoccatColor(Color c) =>
             new Roccat_Talk.TalkFX.Color(c.R, c.G, c.B);
+
         private byte IsLedOn(Color roccatColor)
         {
             if (roccatColor.R == 0 && roccatColor.G == 0 && roccatColor.B == 0)
