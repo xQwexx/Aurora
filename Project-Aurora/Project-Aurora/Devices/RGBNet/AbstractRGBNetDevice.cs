@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Aurora.Settings;
-using RGB.NET.Brushes;
 using RGB.NET.Core;
 using RGB.NET.Groups;
 using Color = System.Drawing.Color;
