@@ -26,9 +26,8 @@ namespace Device_Logitech
 
             LogInfo("Trying to initialize Logitech using the dll for " + (LogitechGSDK.GHUB ? "GHUB" : "LGS"));
 
-            if (LogitechGSDK.LogiLedInit())
+            if (LogitechGSDK.LogiLedInit() && LogitechGSDK.LogiLedSaveCurrentLighting())
             {
-                LogitechGSDK.LogiLedSaveCurrentLighting();
                 LogitechGSDK.LogiLedSetLighting(GlobalVarRegistry.GetVariable<RealColor>($"{DeviceName}_color").GetDrawingColor());
                 return isInitialized = true;
             }
