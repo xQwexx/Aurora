@@ -3,7 +3,7 @@ using CorsairRGB.NET;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
+using System.Text;
 
 namespace Device_Corsair
 {
@@ -55,65 +55,72 @@ namespace Device_Corsair
 
         private bool SetDeviceColors(CorsairDeviceType type, int index, Dictionary<DeviceKeys, Color> keyColors)
         {
-            var dict = GetLedMap(type);
-            if (dict.Count == 0)
-                return false;
-
             List<CorsairLedColor> colors = new List<CorsairLedColor>();
-            foreach (var led in keyColors)
+
+            if (LedMaps.MapsMap.TryGetValue(type, out var dict) && dict.Count != 0)
             {
-                if (dict.TryGetValue(led.Key, out var ledid))
+                foreach (var led in keyColors)
                 {
-                    colors.Add(new CorsairLedColor()
+                    if (dict.TryGetValue(led.Key, out var ledid))
                     {
-                        LedId = ledid,
-                        R = led.Value.R,
-                        G = led.Value.G,
-                        B = led.Value.B
-                    });
+                        colors.Add(new CorsairLedColor()
+                        {
+                            LedId = ledid,
+                            R = led.Value.R,
+                            G = led.Value.G,
+                            B = led.Value.B
+                        });
+                    }
                 }
             }
-            return CUE.SetDeviceColors(index, colors.ToArray());
-        }
-
-        private Dictionary<DeviceKeys, CorsairLedId> GetLedMap(CorsairDeviceType t)
-        {
-            switch (t)
+            else
             {
-                case CorsairDeviceType.Keyboard:
-                    return LedMaps.KeyboardLedMap;
-                case CorsairDeviceType.Mouse:
-                    return LedMaps.MouseLedMap;
-                case CorsairDeviceType.MouseMat:
-                    return LedMaps.MouseMatLedMap;
-                case CorsairDeviceType.HeadsetStand:
-                    return LedMaps.HeadsetStandLedMap;
-                case CorsairDeviceType.Headset:
-                    return LedMaps.HeadsetLedMap;
-                case CorsairDeviceType.Cooler:
-                    return LedMaps.CoolerLedMap;
-                case CorsairDeviceType.CommanderPro:
-                case CorsairDeviceType.LightingNodePro:
-                case CorsairDeviceType.MemoryModule:
-                default:
-                    return new Dictionary<DeviceKeys, CorsairLedId>();
+                if (keyColors.TryGetValue(DeviceKeys.Peripheral_Logo, out var clr))
+                {
+                    foreach (CorsairLedId led in LedMaps.DIYLeds)
+                    {
+                        colors.Add(new CorsairLedColor()
+                        {
+                            LedId = led,
+                            R = clr.R,
+                            G = clr.G,
+                            B = clr.B
+                        });
+                    }
+                }
             }
+
+            if (colors.Count == 0)
+                return false;
+
+            return CUE.SetDeviceColors(index, colors.ToArray());
         }
 
         private string GetSubDeviceDetails()
         {
-            var ret = string.Join(", ", deviceInfos.Select(d => d.Model));
-            foreach (var channels in deviceInfos.Select(d => d.Channels.Channels))
+            StringBuilder a = new StringBuilder();
+            for (int i = 0; i < deviceInfos.Count; i++)
             {
-                foreach (var channel in channels)
+                a.Append(deviceInfos[i].Model);
+                if (deviceInfos[i].Channels.ChannelsCount != 0)
+                    a.Append(": ");
+
+                for (int j = 0; j < deviceInfos[i].Channels.Channels.Length; j++)
                 {
-                    foreach(var dev in channel.Devices)
+                    CorsairChannelInfo channels = deviceInfos[i].Channels.Channels[j];
+                    for (int k = 0; k < channels.Devices.Length; k++)
                     {
-                        ret += " " + dev.Type;
+                        a.Append(channels.Devices[k].Type);
+                        if (k != channels.Devices.Length - 1)
+                            a.Append(", ");
                     }
+                    if (j != deviceInfos[i].Channels.Channels.Length - 1)
+                        a.Append(", ");
                 }
+                if (i != deviceInfos.Count - 1)
+                    a.Append("; ");
             }
-            return ret;
+            return a.ToString();
         }
     }
 }
