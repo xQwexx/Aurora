@@ -1430,6 +1430,8 @@ namespace Aurora.Devices
 
         private long lastUpdateTime = 0;
 
+        public event EventHandler DevicesInitialized;
+
         private bool UpdateIsOngoing = false;
 
         private VariableRegistry variableRegistry;
@@ -1552,13 +1554,14 @@ namespace Aurora.Devices
                     if (await Task.Run(() => InitializeImpl()))
                     {
                         isInitialized = true;
+                        DevicesInitialized?.Invoke(this, new EventArgs());
                     }
                 }
                 catch (Exception exc)
                 {
                     Global.logger.Error("Device, " + GetDeviceName() + ", throwed exception:" + exc.ToString());
                 }
-                Global.logger.Info("Device, " + GetDeviceName() + ", was" + (IsInitialized() ? "" : " not") + " initialized");
+                Global.logger.Info($"[{GetDeviceName()}] {(IsInitialized() ? "Initialized successfully." : "Failed to initialize.")}");
             }
             SingleThread.Release();
 
