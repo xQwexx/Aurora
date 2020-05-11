@@ -288,7 +288,6 @@
     </Compile>
     <Compile Include="Devices\RGBNet\AbstractRGBNetDevice.cs" />
     <Compile Include="Devices\RGBNet\AuroraRGBNetBrush.cs" />
-    <Compile Include="Devices\Roccat\RoccatDevice.cs" />
     <Compile Include="Devices\Roccat\RoccatInstallInstructions.xaml.cs">
       <DependentUpon>RoccatInstallInstructions.xaml</DependentUpon>
     </Compile>
@@ -2324,12 +2323,6 @@
     <Resource Include="Resources\RemoveProfile_Icon.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CroccatTalkWrapper\win32-x86-64\talkfx-c.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="CroccatTalkWrapper\win32-x86\talkfx-c.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="kb_layouts\Extra Features\images\Corsair_Katar_logo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
